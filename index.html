@@ -3,12 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Sanvi Meadows — May 2026 Maintenance Dashboard</title>
+<title>Sanvi Meadows — May 2026 Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono&display=swap');
+/* ── TOKENS ── */
 :root{
-  --teal:#1D9E75;--teal-lt:#E1F5EE;--teal-dk:#085041;
+  --teal:#1D9E75;--teal-lt:#E1F5EE;--teal-dk:#085041;--teal-mid:#0F6E56;
   --amber:#854F0B;--amber-lt:#FEF3E2;--amber-dk:#633806;
   --red:#A32D2D;--red-lt:#FCEBEB;--red-dk:#791F1F;
   --purp:#3C3489;--purp-lt:#EEEDFE;--purp-dk:#26215C;
@@ -16,160 +18,211 @@
   --border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.13);
   --text:#1A1A18;--text2:#5A5955;--text3:#9C9B96;
   --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
-  --r:12px;--rmd:8px;
+  --r:12px;--rmd:8px;--rsm:6px;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1A1A18;--surface:#242422;--surface2:#2C2C2A;
+    --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+    --text:#F0EFEB;--text2:#A8A69F;--text3:#6A6965;
+    --teal-lt:rgba(29,158,117,0.18);--teal-dk:#7FFFD4;
+    --amber-lt:rgba(133,79,11,0.18);--amber-dk:#FFB347;
+    --red-lt:rgba(163,45,45,0.18);--red-dk:#FF8080;
+    --purp-lt:rgba(60,52,137,0.18);--purp-dk:#B3ACFF;
+  }
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
 body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;padding-bottom:40px}
 
-/* HEADER */
-.hdr{background:var(--surface);border-bottom:0.5px solid var(--border2);padding:14px 16px 12px;position:sticky;top:0;z-index:20;box-shadow:0 1px 8px rgba(0,0,0,0.06)}
-.hdr-top{display:flex;align-items:center;gap:10px}
-.hdr-logo{width:38px;height:38px;border-radius:10px;background:var(--teal);color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:-0.5px}
-.hdr-name{font-size:15px;font-weight:600;line-height:1.2}
-.hdr-sub{font-size:11px;color:var(--text2);margin-top:1px}
-.hdr-badge{margin-left:auto;flex-shrink:0;background:var(--teal-lt);color:var(--teal-dk);font-size:11px;font-weight:600;padding:4px 12px;border-radius:999px;border:0.5px solid rgba(29,158,117,.25)}
+/* ── STICKY HEADER ── */
+.hdr{background:var(--surface);border-bottom:0.5px solid var(--border2);padding:12px 16px;position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;box-shadow:0 1px 8px rgba(0,0,0,0.06)}
+.hdr-left{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+.logo{width:36px;height:36px;border-radius:10px;background:var(--teal);color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:-0.5px}
+.hdr-name{font-size:14px;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hdr-sub{font-size:11px;color:var(--text2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hdr-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.month-badge{background:var(--teal-lt);color:var(--teal-dk);font-size:11px;font-weight:600;padding:4px 12px;border-radius:999px;border:0.5px solid rgba(29,158,117,.25);white-space:nowrap}
+.print-btn{background:var(--surface2);border:0.5px solid var(--border2);border-radius:var(--rmd);padding:6px 12px;font-size:11px;font-family:var(--font);color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.print-btn:hover{background:var(--border2)}
+@media print{.print-btn{display:none}.hdr{position:static}}
 
-/* LAYOUT */
-.wrap{padding:12px 12px 0}
-.sec-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin:18px 0 8px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
-.grid4{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+/* ── LAYOUT ── */
+.wrap{max-width:900px;margin:0 auto;padding:12px 12px 0}
+.sec{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin:20px 0 8px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px}
+.g5{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+@media(min-width:540px){.g5{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:700px){.g5{grid-template-columns:repeat(5,1fr)}.g4{grid-template-columns:repeat(4,1fr)}.wrap{padding:16px 20px 0}}
 
-/* KPI */
-.kpi{background:var(--surface);border-radius:var(--r);border:0.5px solid var(--border);padding:13px 14px}
+/* ── KPI CARDS ── */
+.kpi{background:var(--surface);border-radius:var(--r);border:0.5px solid var(--border);padding:12px 14px}
 .kpi-lbl{font-size:11px;color:var(--text2);margin-bottom:5px}
-.kpi-val{font-size:20px;font-weight:700;line-height:1;letter-spacing:-0.5px}
+.kpi-val{font-size:18px;font-weight:600;line-height:1;letter-spacing:-0.4px}
 .kpi-sub{font-size:10px;color:var(--text3);margin-top:4px;line-height:1.45}
 .kpi-bar{height:3px;background:var(--border);border-radius:2px;margin-top:9px;overflow:hidden}
 .kpi-bar-fill{height:3px;border-radius:2px}
 .pill{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;padding:2px 7px;border-radius:999px;background:var(--teal-lt);color:var(--teal-dk)}
 
-/* CARD */
+/* ── CARDS ── */
 .card{background:var(--surface);border-radius:var(--r);border:0.5px solid var(--border);padding:14px;margin-bottom:8px}
-.card-title{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text2);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.ctitle{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text2);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
 
-/* LEGEND */
+/* ── LEGEND ── */
 .legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;font-size:11px;color:var(--text2)}
 .ld{width:8px;height:8px;border-radius:2px;display:inline-block;vertical-align:middle;margin-right:3px}
 
-/* BADGE */
+/* ── BADGES ── */
 .badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:600}
 .bg{background:var(--teal-lt);color:var(--teal-dk)}
 .ba{background:var(--amber-lt);color:var(--amber-dk)}
 .br{background:var(--red-lt);color:var(--red-dk)}
 .bp{background:var(--purp-lt);color:var(--purp-dk)}
 
-/* HORIZONTAL BAR */
-.hbar{display:flex;height:32px;border-radius:8px;overflow:hidden;margin:8px 0 12px}
-.hbar-seg{display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff}
-
-/* MINI STATS */
-.mini-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
-.mini-stat{background:var(--surface2);border-radius:var(--rmd);padding:10px 8px;text-align:center;border:0.5px solid var(--border)}
-.ms-lbl{font-size:10px;color:var(--text3);margin-bottom:3px}
-.ms-val{font-size:13px;font-weight:700;letter-spacing:-0.3px}
-.surplus{background:var(--teal-lt);border-color:rgba(29,158,117,.2)}
-.surplus .ms-lbl{color:var(--teal-dk)}.surplus .ms-val{color:var(--teal-dk)}
-
-/* DONUT ROW */
-.donut-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
-.donut-card{background:var(--surface);border-radius:var(--r);border:0.5px solid var(--border);padding:12px 10px}
-.donut-title{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text2);margin-bottom:8px;text-align:center}
-.donut-foot{font-size:10px;color:var(--text2);text-align:center;margin-top:6px;line-height:1.5}
-
-/* TABLES */
+/* ── TABLES ── */
 .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .tbl{width:100%;border-collapse:collapse;font-size:12px;min-width:280px}
-.tbl th{text-align:left;padding:6px 8px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text3);border-bottom:0.5px solid var(--border2);white-space:nowrap}
+.tbl th{text-align:left;padding:6px 8px;font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text3);border-bottom:0.5px solid var(--border2);white-space:nowrap}
 .tbl td{padding:8px 8px;border-bottom:0.5px solid var(--border);white-space:nowrap}
 .tbl tr:last-child td{border-bottom:none}
 .tbl .r{text-align:right;font-family:var(--mono);font-size:11px}
-.tbl .tot td{font-weight:700;background:var(--surface2)}
+.tbl .tot td{font-weight:600;background:var(--surface2)}
+.tbl .high td{background:var(--amber-lt)}.tbl .high .r{color:var(--amber);font-weight:600}
+.tbl .fixed-row td{color:var(--text3);font-style:italic;font-size:11px;background:var(--surface2)}
 .tbl tbody tr:active td{background:var(--surface2)}
 
-/* PROGRESS */
+/* ── PROGRESS BARS ── */
 .prog-wrap{margin-bottom:10px}
 .prog-lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:4px;gap:8px;line-height:1.3}
-.prog-lbl span:last-child{flex-shrink:0;font-weight:700}
+.prog-lbl span:last-child{flex-shrink:0;font-weight:600}
 .prog-track{height:8px;background:var(--bg);border-radius:4px;overflow:hidden}
 .prog-fill{height:8px;border-radius:4px}
 
-/* ALERTS & INFO */
-.alert{background:var(--red-lt);border-left:3px solid var(--red);padding:10px 12px;font-size:12px;color:var(--red-dk);margin-bottom:12px;border-radius:0 var(--rmd) var(--rmd) 0;line-height:1.5}
-.warn{background:var(--amber-lt);border-left:3px solid var(--amber);padding:8px 12px;font-size:12px;color:var(--amber-dk);margin-top:10px;border-radius:0 var(--rmd) var(--rmd) 0;line-height:1.5}
-.note{background:var(--surface2);border-radius:var(--rmd);padding:8px 12px;font-size:11px;color:var(--text2);margin-top:8px;border:0.5px solid var(--border);line-height:1.5}
-.infobox{background:var(--surface2);border-radius:var(--rmd);padding:10px 12px;font-size:12px;color:var(--text2);border:0.5px solid var(--border);margin-top:10px;line-height:1.5}
-.dues-total-maint{background:var(--red-lt);border-radius:var(--rmd);padding:8px 12px;font-size:12px;color:var(--red-dk);font-weight:600;margin-top:4px}
-.dues-total-corp{background:var(--purp-lt);border-radius:var(--rmd);padding:8px 12px;font-size:12px;color:var(--purp-dk);font-weight:600;margin-bottom:0}
+/* ── ROI PROGRESS ── */
+.roi-bar-row{display:flex;height:20px;border-radius:10px;overflow:hidden;margin:8px 0 5px}
+.roi-done{height:20px;display:flex;align-items:center;padding-left:10px;font-size:10px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden}
+.roi-remain{height:20px;display:flex;align-items:center;justify-content:flex-end;padding-right:10px;font-size:10px;font-weight:600;white-space:nowrap;overflow:hidden;background:var(--amber-lt);color:var(--amber-dk)}
 
-/* CHIPS */
+/* ── HERO TILES ── */
+.hero{border-radius:var(--r);padding:16px;margin-bottom:8px;position:relative;overflow:hidden;color:#fff}
+.hero-icon{position:absolute;right:14px;top:12px;font-size:48px;opacity:.13;line-height:1;pointer-events:none}
+.hero-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;opacity:.8}
+.hero-val{font-size:20px;font-weight:600;letter-spacing:-0.5px;margin-bottom:2px}
+.hero-sub{font-size:11px;opacity:.82;line-height:1.5}
+.hero-grid{display:grid;gap:8px;margin-top:12px}
+.hero-grid.c2{grid-template-columns:1fr 1fr}
+.hero-grid.c3{grid-template-columns:1fr 1fr 1fr}
+.hero-grid.c4{grid-template-columns:repeat(2,1fr)}
+@media(min-width:500px){.hero-grid.c4{grid-template-columns:repeat(4,1fr)}.hero-grid.c3{grid-template-columns:repeat(3,1fr)}}
+.h-stat{border-radius:var(--rmd);padding:10px 12px;background:rgba(255,255,255,.13)}
+.h-stat-lbl{font-size:10px;opacity:.72;margin-bottom:2px}
+.h-stat-val{font-size:14px;font-weight:600}
+.hero-note{font-size:11px;opacity:.82;margin-top:12px;padding-top:10px;border-top:0.5px solid rgba(255,255,255,.18);line-height:1.6}
+.h-teal{background:linear-gradient(135deg,#0F6E56,#1D9E75 60%,#27C48F)}
+.h-purp{background:linear-gradient(135deg,#2C2554,#3C3489 60%,#5147B8)}
+.h-red{background:linear-gradient(135deg,#6B1010,#A32D2D 60%,#D44444)}
+.h-amber{background:linear-gradient(135deg,#5C3307,#854F0B 60%,#BA7517)}
+
+/* ── ALERTS ── */
+.alert{background:var(--red-lt);border-left:3px solid var(--red);padding:9px 12px;font-size:12px;color:var(--red-dk);margin-bottom:12px;border-radius:0 var(--rmd) var(--rmd) 0;line-height:1.5}
+.warn{background:var(--amber-lt);border-left:3px solid var(--amber);padding:8px 12px;font-size:12px;color:var(--amber-dk);border-radius:0 var(--rmd) var(--rmd) 0;margin-top:10px;line-height:1.5}
+.amber-strip{background:var(--amber-lt);border-left:3px solid var(--amber);padding:9px 12px;font-size:12px;color:var(--amber-dk);border-radius:0 var(--rmd) var(--rmd) 0;margin-bottom:10px;line-height:1.5}
+.infobox{background:var(--surface2);border-radius:var(--rmd);padding:10px 12px;font-size:12px;color:var(--text2);border:0.5px solid var(--border);margin-top:10px;line-height:1.6}
+
+/* ── CHIPS ── */
 .chips{display:flex;gap:5px;flex-wrap:wrap}
 .chip{padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;cursor:pointer;border:0.5px solid var(--border2);background:transparent;color:var(--text2);font-family:var(--font);-webkit-tap-highlight-color:transparent}
 .chip.on{background:var(--teal);color:#fff;border-color:var(--teal)}
 
-/* RECON */
-.recon-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:0.5px solid var(--border);font-size:13px;gap:8px}
-.recon-row:last-child{border-bottom:none;font-weight:700}
+/* ── INSIGHT PILLS ── */
+.ins-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.ins{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:var(--rmd);font-size:11px;font-weight:500;border:0.5px solid var(--border)}
+.ins-up{background:var(--red-lt);color:var(--red-dk);border-color:rgba(163,45,45,.2)}
+.ins-dn{background:var(--teal-lt);color:var(--teal-dk);border-color:rgba(29,158,117,.2)}
+.ins-neu{background:var(--surface2);color:var(--text2)}
+.const-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;font-size:10px;font-weight:600;background:var(--surface2);color:var(--text2);border:0.5px dashed var(--border2)}
+
+/* ── HORIZONTAL BAR (income/expense) ── */
+.hbar{display:flex;height:30px;border-radius:8px;overflow:hidden;margin:8px 0 12px}
+.hbar-seg{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff}
+
+/* ── MINI STATS ── */
+.mini-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.ms{background:var(--surface2);border-radius:var(--rmd);padding:9px 8px;text-align:center;border:0.5px solid var(--border)}
+.ms-lbl{font-size:10px;color:var(--text3);margin-bottom:2px}
+.ms-val{font-size:13px;font-weight:600;letter-spacing:-0.3px}
+
+/* ── GATE GRID ── */
+.gate-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:12px}
+@media(min-width:500px){.gate-grid{grid-template-columns:1fr 1fr}}
+.gate-card{background:var(--surface2);border-radius:var(--rmd);padding:12px 14px;border:0.5px solid var(--border)}
+.gate-card-title{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em}
+
+/* ── COLLAPSIBLE TANKER ── */
+.tanker-tile{background:var(--surface);border-radius:var(--r);border:0.5px solid var(--border);margin-bottom:8px;overflow:hidden}
+.tanker-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;gap:10px}
+.tanker-hdr:hover{background:var(--surface2)}
+.tanker-toggle{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--text2);flex-shrink:0}
+.chevron{display:inline-block;transition:transform .25s;font-size:14px}
+.t-open .chevron{transform:rotate(180deg)}
+.tanker-body{display:none;padding:0 14px 14px}
+.tanker-body.open{display:block}
+
+/* ── RECON ── */
+.recon-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:0.5px solid var(--border);font-size:13px;gap:8px}
+.recon-row:last-child{border-bottom:none;font-weight:600}
 .recon-val{font-family:var(--mono);font-size:12px;flex-shrink:0}
 .recon-meta{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border);font-size:12px;color:var(--text2)}
 
-/* DIVIDER */
-.divider{height:0.5px;background:var(--border2);margin:12px 0}
+/* ── CORPUS IMPACT COMPARISON ── */
+.corpus-compare{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:6px;margin-top:14px;background:rgba(0,0,0,.2);border-radius:var(--rmd);padding:12px;align-items:center}
+.cc-arrow{font-size:16px;opacity:.35;text-align:center}
+.cc-lbl{font-size:10px;opacity:.7;margin-bottom:3px}
+.cc-val{font-size:18px;font-weight:600;letter-spacing:-0.5px}
 
-/* HIGHLIGHT BOX */
-.highlight-box{background:var(--teal-lt);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;border:0.5px solid rgba(29,158,117,.2)}
-.hb-title{font-size:10px;font-weight:700;color:var(--teal-dk);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
-.hb-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.hb-item{font-size:12px;color:var(--teal-dk)}
-.hb-val{font-size:15px;font-weight:700;color:var(--teal);display:block;margin-top:1px}
+/* ── FOOTER ── */
+.footer{text-align:center;font-size:11px;color:var(--text3);padding:20px 16px 12px;line-height:1.6}
 
-/* FOOTER */
-.footer{text-align:center;font-size:11px;color:var(--text3);padding:20px 16px 12px}
-
-/* PRINT */
+/* ── PRINT ── */
 @media print{
-  .hdr{position:static}
   body{background:#fff}
-  .card,.kpi,.donut-card{break-inside:avoid}
-}
-
-/* LARGER SCREENS */
-@media(min-width:600px){
-  .wrap{max-width:720px;margin:0 auto;padding:16px 20px 0}
-  .grid4{grid-template-columns:repeat(4,1fr)}
-  .hdr{padding:14px 24px 12px}
+  .hdr{position:static;box-shadow:none}
+  .card,.kpi,.hero,.tanker-tile{break-inside:avoid}
+  .tanker-body{display:block!important}
 }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
+<!-- ══════════ STICKY HEADER ══════════ -->
 <div class="hdr">
-  <div class="hdr-top">
-    <div class="hdr-logo">SM</div>
+  <div class="hdr-left">
+    <div class="logo">SM</div>
     <div>
       <div class="hdr-name">Sanvi Meadows OWA</div>
-      <div class="hdr-sub">Serilingampalli, Hyderabad · Reg. 1369/2017</div>
+      <div class="hdr-sub">Bhagya Lakshmi Nagar Phase 2, Serilingampalli · Reg. 1369/2017</div>
     </div>
-    <span class="hdr-badge">May 2026</span>
+  </div>
+  <div class="hdr-right">
+    <span class="month-badge">May 2026</span>
+    <button class="print-btn" onclick="window.print()" aria-label="Print or save as PDF">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Save PDF
+    </button>
   </div>
 </div>
 
 <div class="wrap">
 
-<!-- ── SECTION 1: KPIs ── -->
-<div class="sec-lbl">Summary</div>
-<div class="grid4">
+<!-- ══════════ SEC 1: KPIs ══════════ -->
+<div class="sec">May 2026 Summary</div>
+<div class="g5">
   <div class="kpi">
     <div class="kpi-lbl">Opening balance</div>
     <div class="kpi-val" style="color:var(--teal)">₹12,78,622</div>
     <div class="kpi-sub">30 Apr 2026</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-lbl">Closing balance</div>
-    <div class="kpi-val" style="color:var(--teal)">₹13,23,174</div>
-    <div class="kpi-sub">31 May 2026 <span class="pill">✓ Match</span></div>
   </div>
   <div class="kpi">
     <div class="kpi-lbl">Total collected</div>
@@ -178,217 +231,325 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14
     <div class="kpi-bar"><div class="kpi-bar-fill" style="width:100%;background:var(--teal)"></div></div>
   </div>
   <div class="kpi">
-    <div class="kpi-lbl">Total expenses</div>
-    <div class="kpi-val" style="color:var(--amber)">₹94,563</div>
-    <div class="kpi-sub">Online ₹85,548<br>Cash ₹9,015</div>
-    <div class="kpi-bar"><div class="kpi-bar-fill" style="width:66%;background:var(--amber)"></div></div>
+    <div class="kpi-lbl">Variable expenses</div>
+    <div class="kpi-val" style="color:var(--amber)">₹37,563</div>
+    <div class="kpi-sub">Excl. fixed salaries ₹57,000</div>
+    <div class="kpi-bar"><div class="kpi-bar-fill" style="width:40%;background:var(--amber)"></div></div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-lbl">Closing balance</div>
+    <div class="kpi-val" style="color:var(--teal)">₹13,23,174</div>
+    <div class="kpi-sub">31 May 2026<br><span class="pill">✓ Bank match</span></div>
+  </div>
+  <div class="kpi" style="background:var(--red-lt);border-color:rgba(163,45,45,.2)">
+    <div class="kpi-lbl" style="color:var(--red-dk)">Outstanding dues</div>
+    <div class="kpi-val" style="color:var(--red)">₹60,100</div>
+    <div class="kpi-sub" style="color:var(--red-dk)">Maint. ₹25,100<br>Corpus ₹35,000</div>
+    <div class="kpi-bar"><div class="kpi-bar-fill" style="width:100%;background:var(--red)"></div></div>
   </div>
 </div>
 
-<!-- Highlight: surplus -->
-<div class="highlight-box">
-  <div class="hb-title">May 2026 highlights</div>
-  <div class="hb-grid">
-    <div class="hb-item">Net surplus<span class="hb-val">₹47,783</span></div>
-    <div class="hb-item">507 advance received<span class="hb-val">₹33,000</span></div>
-    <div class="hb-item">Security cut (irregularity)<span class="hb-val">−₹2,000</span></div>
-    <div class="hb-item">Watchman advance settled<span class="hb-val">₹5,000</span></div>
+<!-- ══════════ SEC 2: SOLAR HERO ══════════ -->
+<div class="sec">Solar Power Savings — Active since January 2024</div>
+<div class="hero h-teal" role="region" aria-label="Solar power savings: 29 months, Rs 5,36,500 saved of Rs 9,50,000 investment">
+  <div class="hero-icon" aria-hidden="true">☀</div>
+  <div class="hero-label">☀ Solar power installation</div>
+  <div class="hero-val">₹5,36,500 saved so far</div>
+  <div class="hero-sub">₹18,500/month × 29 months (Jan 2024–May 2026) · Investment ₹9,50,000 · Breakeven ~Mar 2028</div>
+  <div class="hero-grid c4">
+    <div class="h-stat"><div class="h-stat-lbl">Monthly saving</div><div class="h-stat-val">₹18,500</div></div>
+    <div class="h-stat"><div class="h-stat-lbl">Months elapsed</div><div class="h-stat-val">29 months</div></div>
+    <div class="h-stat"><div class="h-stat-lbl">Saved to date</div><div class="h-stat-val">₹5,36,500</div></div>
+    <div class="h-stat"><div class="h-stat-lbl">Still to recover</div><div class="h-stat-val">₹4,13,500</div></div>
   </div>
+  <div class="hero-note">🕐 At ₹18,500/month, remaining ₹4,13,500 recovered in ~<strong>22 more months</strong> → full breakeven <strong>March 2028</strong>. After that, every month is pure community saving.</div>
 </div>
-
-<!-- ── SECTION 2: Income vs Expense + Breakdown ── -->
-<div class="sec-lbl">Income &amp; Expenses</div>
 
 <div class="card">
-  <div class="card-title">Income vs expense split</div>
+  <div class="ctitle">Solar investment recovery tracker</div>
+  <div class="amber-strip">⏳ Investment in progress — <strong>56.5%</strong> recovered (₹5,36,500 of ₹9,50,000). Breakeven expected <strong>~March 2028</strong> — 22 months from now.</div>
+  <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:5px">
+    <span>Recovered ₹5,36,500 (56.5%)</span><span>Remaining ₹4,13,500 (43.5%)</span>
+  </div>
+  <div class="roi-bar-row" role="progressbar" aria-valuenow="56" aria-valuemin="0" aria-valuemax="100" aria-label="56.5 percent of solar investment recovered">
+    <div class="roi-done" style="width:56.5%;background:var(--teal)">₹5,36,500 recovered</div>
+    <div class="roi-remain" style="width:43.5%">₹4,13,500 to go</div>
+  </div>
+  <div style="font-size:10px;color:var(--text3);margin-bottom:14px">29 of 51 months elapsed · Full breakeven at month 51 (~Mar 2028)</div>
+  <div class="g4" style="margin-bottom:14px">
+    <div class="kpi"><div class="kpi-lbl">Investment</div><div class="kpi-val" style="color:var(--amber)">₹9,50,000</div><div class="kpi-sub">One-time cost</div></div>
+    <div class="kpi"><div class="kpi-lbl">Saved to date</div><div class="kpi-val" style="color:var(--teal)">₹5,36,500</div><div class="kpi-sub">29 mo × ₹18,500</div></div>
+    <div class="kpi"><div class="kpi-lbl">Still to recover</div><div class="kpi-val" style="color:var(--amber)">₹4,13,500</div><div class="kpi-sub">~22 months left</div></div>
+    <div class="kpi" style="background:var(--teal-lt)"><div class="kpi-lbl" style="color:var(--teal-dk)">Breakeven</div><div class="kpi-val" style="color:var(--teal-mid)">Mar 2028</div><div class="kpi-sub" style="color:var(--teal-dk)">Month 51 from Jan 2024</div></div>
+  </div>
   <div class="legend">
-    <span><span class="ld" style="background:var(--teal)"></span>Collected 60.1%</span>
-    <span><span class="ld" style="background:var(--amber)"></span>Expenses 39.9%</span>
+    <span><span class="ld" style="background:var(--teal)"></span>Actual savings</span>
+    <span><span class="ld" style="background:var(--teal);opacity:.4"></span>Projected savings</span>
+    <span><span class="ld" style="background:var(--red)"></span>Investment ₹9,50,000</span>
   </div>
-  <div class="hbar">
-    <div class="hbar-seg" style="width:60.1%;background:var(--teal)">60.1%</div>
-    <div class="hbar-seg" style="width:39.9%;background:var(--amber)">39.9%</div>
-  </div>
-  <div class="mini-stats">
-    <div class="mini-stat"><div class="ms-lbl">Collected</div><div class="ms-val" style="color:var(--teal)">₹1,42,346</div></div>
-    <div class="mini-stat"><div class="ms-lbl">Expenses</div><div class="ms-val" style="color:var(--amber)">₹94,563</div></div>
-    <div class="mini-stat surplus"><div class="ms-lbl">Net surplus</div><div class="ms-val">₹47,783</div></div>
-  </div>
-  <div style="position:relative;height:160px;margin-top:14px">
-    <canvas id="c1" role="img" aria-label="Donut: collected ₹1,42,346 vs expenses ₹94,563"></canvas>
+  <div style="position:relative;height:190px"><canvas id="cRoi" role="img" aria-label="Line chart solar savings vs investment: actual Jan 2024 to May 2026, projected to March 2028 breakeven">Cumulative solar savings cross ₹9,50,000 investment around March 2028.</canvas></div>
+
+  <div style="overflow-x:auto;margin-top:14px">
+  <table class="tbl" style="min-width:380px">
+    <thead><tr><th>Milestone</th><th>Month</th><th>Date</th><th class="r">Cumulative saved</th><th class="r">Remaining</th></tr></thead>
+    <tbody>
+      <tr><td>Installation</td><td>0</td><td>Jan 2024</td><td class="r">₹0</td><td class="r" style="color:var(--amber)">₹9,50,000</td></tr>
+      <tr><td>1 year</td><td>12</td><td>Dec 2024</td><td class="r">₹2,22,000</td><td class="r" style="color:var(--amber)">₹7,28,000</td></tr>
+      <tr><td>2 years</td><td>24</td><td>Dec 2025</td><td class="r">₹4,44,000</td><td class="r" style="color:var(--amber)">₹5,06,000</td></tr>
+      <tr style="background:var(--amber-lt)"><td><strong>Today (May 2026)</strong></td><td><strong>29</strong></td><td><strong>May 2026</strong></td><td class="r" style="color:var(--teal)"><strong>₹5,36,500</strong></td><td class="r" style="color:var(--amber)"><strong>₹4,13,500</strong></td></tr>
+      <tr><td>Breakeven ✓</td><td>51</td><td>Mar 2028</td><td class="r" style="color:var(--teal)">₹9,43,500</td><td class="r" style="color:var(--teal)">≈ ₹0</td></tr>
+      <tr class="tot"><td>5 yrs post-breakeven</td><td>111</td><td>Mar 2033</td><td class="r" style="color:var(--teal)">₹20,53,500</td><td class="r" style="color:var(--teal)">Pure gain</td></tr>
+    </tbody>
+  </table>
   </div>
 </div>
 
+<!-- ══════════ SEC 3: ADONMO HERO ══════════ -->
+<div class="sec">Adonmo Advertisement — CCTV Maintenance Fund (Since Jan 2022)</div>
+<div class="hero h-purp" role="region" aria-label="Adonmo advertisement: 54 months, Rs 59,400 total funded for CCTV maintenance">
+  <div class="hero-icon" aria-hidden="true">📷</div>
+  <div class="hero-label">📷 Adonmo advertisement income — CCTV fund</div>
+  <div class="hero-val">₹59,400 funded to date</div>
+  <div class="hero-sub">₹1,100/month × 54 months (Jan 2022–May 2026) · Zero drain on maintenance or corpus</div>
+  <div class="hero-grid c4">
+    <div class="h-stat"><div class="h-stat-lbl">Monthly income</div><div class="h-stat-val">₹1,100</div></div>
+    <div class="h-stat"><div class="h-stat-lbl">Active since</div><div class="h-stat-val">Jan 2022</div></div>
+    <div class="h-stat"><div class="h-stat-lbl">Months running</div><div class="h-stat-val">54 months</div></div>
+    <div class="h-stat"><div class="h-stat-lbl">Total funded</div><div class="h-stat-val">₹59,400</div></div>
+  </div>
+  <div class="hero-note">🔒 CCTV maintenance is entirely self-funded by Adonmo income. Without this, ₹59,400 would have been drawn from corpus or collected separately from residents as a special levy.</div>
+</div>
+
+<!-- ══════════ SEC 4: CORPUS IMPACT ══════════ -->
+<div class="sec">Corpus Fund — What If These Savings Weren't There?</div>
+<div class="hero h-red" role="region" aria-label="Corpus impact: Rs 5,95,900 total corpus protected. Actual balance Rs 13,23,174 vs Rs 7,27,274 without savings.">
+  <div class="hero-icon" aria-hidden="true">🏦</div>
+  <div class="hero-label">🏦 Without solar + Adonmo — corpus fund impact</div>
+  <div class="hero-val">₹5,95,900 corpus protected</div>
+  <div class="hero-sub">Solar ₹5,36,500 (29 mo) + Adonmo ₹59,400 (54 mo) = total savings that stayed in corpus</div>
+  <div class="hero-grid c3">
+    <div class="h-stat"><div class="h-stat-lbl">Solar to date (29 mo)</div><div class="h-stat-val">₹5,36,500</div></div>
+    <div class="h-stat"><div class="h-stat-lbl">Adonmo to date (54 mo)</div><div class="h-stat-val">₹59,400</div></div>
+    <div class="h-stat"><div class="h-stat-lbl">Total protected</div><div class="h-stat-val">₹5,95,900</div></div>
+  </div>
+  <div class="corpus-compare">
+    <div><div class="cc-lbl">Actual balance now</div><div class="cc-val">₹13,23,174</div></div>
+    <div class="cc-arrow">→</div>
+    <div><div class="cc-lbl">Without savings</div><div class="cc-val" style="color:#FFB3B3">₹7,27,274</div></div>
+    <div class="cc-arrow">or</div>
+    <div><div class="cc-lbl">Extra levy/flat</div><div class="cc-val" style="color:#FFB3B3">₹17,026</div></div>
+  </div>
+  <div class="hero-note">Without solar and Adonmo, the corpus would be ₹7,27,274 instead of ₹13,23,174. Alternatively, each of the 35 flats would have paid an extra <strong>₹17,026</strong> as a special levy. These two decisions are the most impactful for this community.</div>
+</div>
+
+<!-- CORPUS BAR CHART -->
 <div class="card">
-  <div class="card-title">Expense breakdown</div>
+  <div class="ctitle">Corpus balance — actual vs without savings</div>
   <div class="legend">
-    <span><span class="ld" style="background:#854F0B"></span>Salaries ₹57,000</span>
-    <span><span class="ld" style="background:#BA7517"></span>Water ₹22,200</span>
-    <span><span class="ld" style="background:#EF9F27"></span>Diesel ₹12,000</span>
-    <span><span class="ld" style="background:#888780"></span>Other ₹3,363</span>
+    <span><span class="ld" style="background:var(--teal)"></span>Actual ₹13,23,174</span>
+    <span><span class="ld" style="background:var(--red)"></span>Without savings ₹7,27,274</span>
+    <span><span class="ld" style="background:var(--amber);opacity:.6"></span>Protected ₹5,95,900</span>
   </div>
-  <div style="position:relative;height:180px">
-    <canvas id="c2" role="img" aria-label="Bar chart expense categories May 2026"></canvas>
-  </div>
+  <div style="position:relative;height:150px"><canvas id="cCorpus" role="img" aria-label="Horizontal bar: actual Rs 13,23,174 vs without-savings Rs 7,27,274">Actual ₹13,23,174 vs without savings ₹7,27,274.</canvas></div>
 </div>
 
-<!-- ── SECTION 3: Three Donuts ── -->
-<div class="sec-lbl">Breakdowns</div>
-<div class="donut-row">
-  <div class="donut-card">
-    <div class="donut-title">Mode</div>
-    <div style="position:relative;height:90px"><canvas id="c3"></canvas></div>
-    <div class="donut-foot">
-      <span style="color:var(--teal);font-weight:600">91.4%</span> Online<br>
-      <span style="color:var(--amber);font-weight:600">8.6%</span> Cash
-    </div>
-  </div>
-  <div class="donut-card">
-    <div class="donut-title">Tankers</div>
-    <div style="position:relative;height:90px"><canvas id="c4"></canvas></div>
-    <div class="donut-foot">
-      <span style="color:var(--teal);font-weight:600">7</span> Normal<br>
-      <span style="color:var(--amber);font-weight:600">5</span> Commercial
-    </div>
-  </div>
-  <div class="donut-card">
-    <div class="donut-title">Dues</div>
-    <div style="position:relative;height:90px"><canvas id="c5"></canvas></div>
-    <div class="donut-foot">
-      <span style="color:var(--red);font-weight:600">₹25.1k</span> Maint.<br>
-      <span style="color:var(--purp);font-weight:600">₹35k</span> Corpus
-    </div>
-  </div>
-</div>
-
-<!-- ── SECTION 4: Collections Table ── -->
-<div class="sec-lbl">Collections Detail</div>
+<!-- ══════════ SEC 5: COMBINED TIMELINE ══════════ -->
 <div class="card">
-  <div class="card-title">All receipts — May 2026</div>
+  <div class="ctitle">Combined savings timeline — Jan 2022 to projected breakeven (Mar 2028)</div>
+  <div class="legend">
+    <span><span class="ld" style="background:var(--purp)"></span>Adonmo (Jan 2022)</span>
+    <span><span class="ld" style="background:var(--teal)"></span>Solar (Jan 2024)</span>
+    <span><span class="ld" style="background:var(--amber)"></span>Combined</span>
+    <span><span class="ld" style="background:var(--red)"></span>Solar investment ₹9.5L</span>
+  </div>
+  <div style="position:relative;height:190px"><canvas id="cTimeline" role="img" aria-label="Combined savings timeline Jan 2022 to Mar 2028">Adonmo from Jan 2022, Solar from Jan 2024, combined line crosses investment around March 2028.</canvas></div>
+</div>
+
+<!-- ══════════ SEC 6: GATE AUTOMATION ══════════ -->
+<div class="sec">Recommendation — Automate Entry/Exit Gates</div>
+<div class="hero h-amber" role="region" aria-label="Gate automation recommendation: save Rs 15,000 to 20,000 per month, breakeven 9 to 12 months">
+  <div class="hero-icon" aria-hidden="true">🚧</div>
+  <div class="hero-label">💡 Gate automation — security cost reduction</div>
+  <div class="hero-val">Save ₹15,000–₹20,000/month</div>
+  <div class="hero-sub">Boom barriers + RFID intercom replace agency dependency. Current cost ₹28,000/month.</div>
+  <div class="hero-grid c4">
+    <div class="h-stat"><div class="h-stat-lbl">Current security</div><div class="h-stat-val">₹28,000/mo</div></div>
+    <div class="h-stat"><div class="h-stat-lbl">Post-automation</div><div class="h-stat-val">₹8–13k/mo</div></div>
+    <div class="h-stat"><div class="h-stat-lbl">Monthly saving</div><div class="h-stat-val">₹15–20k</div></div>
+    <div class="h-stat"><div class="h-stat-lbl">Breakeven</div><div class="h-stat-val">9–12 months</div></div>
+  </div>
+  <div class="hero-note">Security is the single largest expense every month. Gate automation delivers faster ROI than solar — investment recovered in under a year vs ~22 months still pending for solar.</div>
+</div>
+
+<div class="card">
+  <div class="ctitle">Gate automation — investment vs savings analysis</div>
+  <div class="gate-grid">
+    <div class="gate-card">
+      <div class="gate-card-title">Estimated one-time cost</div>
+      <div class="prog-wrap"><div class="prog-lbl"><span>Boom barriers (2 gates)</span><span>₹1,20,000</span></div><div class="prog-track"><div class="prog-fill" style="width:75%;background:var(--amber)"></div></div></div>
+      <div class="prog-wrap"><div class="prog-lbl"><span>RFID / intercom</span><span>₹40,000</span></div><div class="prog-track"><div class="prog-fill" style="width:25%;background:#BA7517"></div></div></div>
+      <div class="prog-wrap"><div class="prog-lbl"><span>Installation &amp; wiring</span><span>₹20,000</span></div><div class="prog-track"><div class="prog-fill" style="width:13%;background:#EF9F27"></div></div></div>
+      <div style="background:var(--amber-lt);border-radius:var(--rmd);padding:7px 10px;font-size:12px;color:var(--amber-dk);font-weight:600;margin-top:6px">Total ~₹1,80,000 one-time</div>
+    </div>
+    <div class="gate-card">
+      <div class="gate-card-title">Monthly savings projection</div>
+      <div class="prog-wrap"><div class="prog-lbl"><span>Conservative ₹15,000/mo</span><span style="color:var(--teal)">₹15,000</span></div><div class="prog-track"><div class="prog-fill" style="width:75%;background:var(--teal)"></div></div></div>
+      <div class="prog-wrap"><div class="prog-lbl"><span>Optimistic ₹20,000/mo</span><span style="color:var(--teal-mid)">₹20,000</span></div><div class="prog-track"><div class="prog-fill" style="width:100%;background:var(--teal-mid)"></div></div></div>
+      <div class="prog-wrap"><div class="prog-lbl"><span>Annual saving (mid)</span><span style="color:var(--teal)">₹2,10,000</span></div><div class="prog-track"><div class="prog-fill" style="width:87%;background:var(--teal)"></div></div></div>
+      <div style="background:var(--teal-lt);border-radius:var(--rmd);padding:7px 10px;font-size:12px;color:var(--teal-dk);font-weight:600;margin-top:6px">Breakeven in 9–12 months</div>
+    </div>
+  </div>
+  <div class="legend">
+    <span><span class="ld" style="background:var(--teal)"></span>Conservative (₹15k/mo)</span>
+    <span><span class="ld" style="background:var(--teal-mid)"></span>Optimistic (₹20k/mo)</span>
+    <span><span class="ld" style="background:var(--red)"></span>Investment ₹1,80,000</span>
+  </div>
+  <div style="position:relative;height:170px"><canvas id="cGate" role="img" aria-label="Gate automation savings vs investment over 18 months">Conservative breakeven M12, optimistic M9.</canvas></div>
+  <div class="infobox">
+    <strong>Next steps:</strong><br>
+    1. Get 2–3 quotes (Came, Nice, BFT — common vendors in Hyderabad)<br>
+    2. Existing CCTV integrates with intercom — reduces add-on cost<br>
+    3. Present at next GBM — ₹1,80,000 from corpus, recovered in &lt; 1 year<br>
+    4. Retain one watchman for night rounds &amp; visitor assistance
+  </div>
+</div>
+
+<!-- ══════════ SEC 7: VARIABLE EXPENSES ══════════ -->
+<div class="sec">Fixed vs Variable Expenses — May 2026</div>
+<div class="card">
+  <div class="ctitle">Expense structure</div>
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;padding:10px 12px;background:var(--surface2);border-radius:var(--rmd);border:0.5px dashed var(--border2)">
+    <span class="const-badge">🔒 Fixed · Salaries ₹57,000/month</span>
+    <span style="font-size:12px;color:var(--text2)">Security ₹28k · Gardener ₹9.5k · HK ×2 ₹11k · Watchman+GHMC ₹8.5k — constant. Excluded from variable analysis.</span>
+  </div>
+  <div class="ins-row">
+    <span class="ins ins-up">🔺 Water tankers — highest variable cost</span>
+    <span class="ins ins-up">🔺 Diesel rising — 4 fills vs 2 in Feb</span>
+    <span class="ins ins-dn">🟢 Variable costs at 4-month low ₹37,563</span>
+    <span class="ins ins-dn">🟢 Mar one-off spike fully normalised</span>
+  </div>
+  <div class="legend">
+    <span><span class="ld" style="background:var(--amber)"></span>Water tankers</span>
+    <span><span class="ld" style="background:#BA7517"></span>Diesel</span>
+    <span><span class="ld" style="background:#888780"></span>Other</span>
+  </div>
+  <div style="position:relative;height:190px"><canvas id="cVarCat" role="img" aria-label="Variable expense categories Feb Mar Apr May 2026">Water tankers, diesel, other by month.</canvas></div>
+</div>
+
+<!-- ══════════ SEC 8: WATER TANKERS (COLLAPSIBLE) ══════════ -->
+<div class="sec">Water Tankers — May 2026</div>
+<div class="tanker-tile">
+  <div class="tanker-hdr" onclick="toggleTanker()" id="tanker-hdr" role="button" aria-expanded="false" aria-controls="tanker-body">
+    <div style="flex:1">
+      <div style="font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">12 trips · ₹20,200 · Highest variable expense</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <span style="font-size:12px;color:var(--teal);font-weight:600">7 Normal ₹7,700</span>
+        <span style="font-size:12px;color:var(--amber);font-weight:600">5 Commercial ₹12,500 (61.9% of spend)</span>
+      </div>
+    </div>
+    <div class="tanker-toggle" id="tanker-toggle"><span id="toggle-lbl">Show details</span><span class="chevron">▾</span></div>
+  </div>
+  <div class="tanker-body" id="tanker-body">
+    <div class="g2" style="margin-bottom:12px">
+      <div style="position:relative;height:120px"><canvas id="c4" role="img" aria-label="7 normal 5 commercial tanker trips donut">7 normal, 5 commercial.</canvas></div>
+      <div>
+        <div class="chips" style="margin-bottom:10px">
+          <button class="chip on" id="f-all" onclick="filterT('all')">All (12)</button>
+          <button class="chip off" id="f-n" onclick="filterT('Normal')">Normal (7)</button>
+          <button class="chip off" id="f-c" onclick="filterT('Commercial')">Comm. (5)</button>
+        </div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>Date</th><th>Type</th><th>Qty</th><th class="r">Unit (₹)</th><th class="r">Amt (₹)</th></tr></thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="legend"><span><span class="ld" style="background:var(--teal)"></span>Normal</span><span><span class="ld" style="background:var(--amber)"></span>Commercial</span></div>
+    <div style="position:relative;height:140px"><canvas id="c6" role="img" aria-label="Stacked bar tanker costs by date May 2026">Tanker costs by date May 2026.</canvas></div>
+  </div>
+</div>
+
+<!-- ══════════ SEC 9: COLLECTIONS ══════════ -->
+<div class="sec">Collections Detail — May 2026</div>
+<div class="card">
+  <div class="ctitle">All receipts</div>
   <div class="tbl-wrap">
-    <table class="tbl">
-      <thead><tr><th>Source</th><th>Mode</th><th class="r">Amount (₹)</th></tr></thead>
-      <tbody>
-        <tr><td>30 flats — maintenance</td><td><span class="badge bg">Online</span></td><td class="r" style="color:var(--teal)">90,000</td></tr>
-        <tr><td>305, 505 — Apr dues</td><td><span class="badge bg">Online</span></td><td class="r" style="color:var(--teal)">6,000</td></tr>
-        <tr><td>507 — advance (till Apr 27)</td><td><span class="badge bg">Online</span></td><td class="r" style="color:var(--teal)">33,000</td></tr>
-        <tr><td>Adonmo (advertisement)</td><td><span class="badge bg">Online</span></td><td class="r">1,100</td></tr>
-        <tr><td>107 — Apr due clearance</td><td><span class="badge ba">Cash</span></td><td class="r" style="color:var(--amber)">3,000</td></tr>
-        <tr><td>305, 302 — May maintenance</td><td><span class="badge ba">Cash</span></td><td class="r" style="color:var(--amber)">6,000</td></tr>
-        <tr><td>Carry forward (1 May)</td><td><span class="badge ba">Cash</span></td><td class="r">3,246</td></tr>
-        <tr class="tot"><td colspan="2">Total</td><td class="r">1,42,346</td></tr>
-      </tbody>
-    </table>
+  <table class="tbl">
+    <thead><tr><th style="width:44%">Source</th><th style="width:18%">Mode</th><th class="r" style="width:38%">Amount (₹)</th></tr></thead>
+    <tbody>
+      <tr><td>30 flats — maintenance</td><td><span class="badge bg">Online</span></td><td class="r" style="color:var(--teal)">90,000</td></tr>
+      <tr><td>305, 505 — Apr dues</td><td><span class="badge bg">Online</span></td><td class="r" style="color:var(--teal)">6,000</td></tr>
+      <tr><td>507 — advance (till Apr 27)</td><td><span class="badge bg">Online</span></td><td class="r" style="color:var(--teal)">33,000</td></tr>
+      <tr><td>Adonmo (advertisement)</td><td><span class="badge bg">Online</span></td><td class="r">1,100</td></tr>
+      <tr><td>107 — Apr due clearance</td><td><span class="badge ba">Cash</span></td><td class="r" style="color:var(--amber)">3,000</td></tr>
+      <tr><td>305, 302 — May maint.</td><td><span class="badge ba">Cash</span></td><td class="r" style="color:var(--amber)">6,000</td></tr>
+      <tr><td>Carry forward (1 May)</td><td><span class="badge ba">Cash</span></td><td class="r">3,246</td></tr>
+      <tr class="tot"><td colspan="2">Total</td><td class="r">1,42,346</td></tr>
+    </tbody>
+  </table>
   </div>
   <div class="warn">⚠ Flats 305 &amp; 302 paid by cash. Please switch to online — use remark <strong>FLAT_NO_Month</strong> (e.g. 302_May)</div>
 </div>
 
-<!-- ── SECTION 4b: Expenses Table ── -->
-<div class="sec-lbl">Expenses Detail</div>
+<!-- ══════════ SEC 10: EXPENSES ══════════ -->
+<div class="sec">Expenses Detail — May 2026</div>
 <div class="card">
-  <div class="card-title">All payments — May 2026</div>
+  <div class="ctitle">All payments · <span style="color:var(--amber);font-weight:500">amber = top 2 highest</span></div>
   <div class="tbl-wrap">
-    <table class="tbl">
-      <thead><tr><th>Item</th><th>Date</th><th class="r">Amount (₹)</th></tr></thead>
-      <tbody>
-        <tr><td>Security agency (Madhusudhan)</td><td>3-May</td><td class="r" style="color:var(--amber)">28,000</td></tr>
-        <tr><td>Gardener salary</td><td>3-May</td><td class="r" style="color:var(--amber)">9,500</td></tr>
-        <tr><td>Housekeeping ×2 (Kavitha + Ayesha)</td><td>3-May</td><td class="r" style="color:var(--amber)">11,000</td></tr>
-        <tr><td>Watchman (Veera Babu) + GHMC</td><td>3-May</td><td class="r" style="color:var(--amber)">8,500</td></tr>
-        <tr><td>Water lineman charges</td><td>6-May</td><td class="r" style="color:var(--amber)">2,000</td></tr>
-        <tr><td>Water tankers</td><td>May</td><td class="r" style="color:var(--amber)">20,200</td></tr>
-        <tr><td>Diesel — online ×2</td><td>17–21 May</td><td class="r" style="color:var(--amber)">6,000</td></tr>
-        <tr><td>Diesel — cash ×2</td><td>2–9 May</td><td class="r" style="color:var(--amber)">6,000</td></tr>
-        <tr><td>Housekeeping supplies</td><td>2-May</td><td class="r" style="color:var(--amber)">3,015</td></tr>
-        <tr><td>Act Fiber bill</td><td>3-May</td><td class="r">348</td></tr>
-        <tr class="tot"><td colspan="2">Total</td><td class="r">94,563</td></tr>
-      </tbody>
-    </table>
+  <table class="tbl">
+    <thead><tr><th style="width:46%">Item</th><th style="width:18%">Date</th><th class="r" style="width:36%">Amount (₹)</th></tr></thead>
+    <tbody>
+      <tr class="fixed-row"><td colspan="3">🔒 Fixed salaries ₹57,000 — Security ₹28k · Gardener ₹9.5k · HK ×2 ₹11k · Watchman+GHMC ₹8.5k</td></tr>
+      <tr class="high"><td>Security agency (−₹2k for irregularity)</td><td>3-May</td><td class="r">28,000</td></tr>
+      <tr><td>Gardener salary</td><td>3-May</td><td class="r" style="color:var(--text2)">9,500</td></tr>
+      <tr><td>Housekeeping ×2</td><td>3-May</td><td class="r" style="color:var(--text2)">11,000</td></tr>
+      <tr><td>Watchman + GHMC</td><td>3-May</td><td class="r" style="color:var(--text2)">8,500</td></tr>
+      <tr class="high"><td>Water tankers</td><td>May</td><td class="r">20,200</td></tr>
+      <tr><td>Water lineman charges</td><td>6-May</td><td class="r" style="color:var(--text2)">2,000</td></tr>
+      <tr><td>Diesel (online ×2)</td><td>17–21 May</td><td class="r" style="color:var(--text2)">6,000</td></tr>
+      <tr><td>Diesel (cash ×2)</td><td>2–9 May</td><td class="r" style="color:var(--text2)">6,000</td></tr>
+      <tr><td>Housekeeping supplies</td><td>2-May</td><td class="r" style="color:var(--text2)">3,015</td></tr>
+      <tr><td>Act Fiber bill</td><td>3-May</td><td class="r" style="color:var(--text2)">348</td></tr>
+      <tr class="tot"><td colspan="2">Total</td><td class="r">94,563</td></tr>
+    </tbody>
+  </table>
   </div>
-  <div class="note">ℹ Security salary reduced by ₹2,000 due to irregularities. Watchman's ₹5,000 salary advance (from prior month) fully settled this month.</div>
 </div>
 
-<!-- ── SECTION 5: Water Tankers ── -->
-<div class="sec-lbl">Water Tankers</div>
+<!-- ══════════ SEC 11: DUES ══════════ -->
+<div class="sec">Outstanding Dues — May 2026</div>
 <div class="card">
-  <div class="card-title">
-    Tanker log — May 2026
-    <div class="chips">
-      <button class="chip on" id="f-all" onclick="filterT('all')">All 12</button>
-      <button class="chip off" id="f-n"   onclick="filterT('Normal')">Normal 7</button>
-      <button class="chip off" id="f-c"   onclick="filterT('Commercial')">Comm. 5</button>
+  <div class="ctitle">₹60,100 total · 6 entries</div>
+  <div class="alert">⚠ Total outstanding <strong>₹60,100</strong>. New this month: Flats 102, 405, 501 (May) + Flat 307 party hall ₹3,100. Flat 104 longest arrear tail. Flat 407 corpus ₹35,000 unpaid for 4+ months.</div>
+  <div class="g2" style="margin-bottom:0">
+    <div>
+      <div style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Maintenance dues</div>
+      <div class="prog-wrap"><div class="prog-lbl"><span>306 Jan + 102, 405, 501 May</span><span style="color:var(--red)">₹12,000</span></div><div class="prog-track"><div class="prog-fill" style="width:100%;background:var(--red)"></div></div></div>
+      <div class="prog-wrap"><div class="prog-lbl"><span>104 — Oct–Dec 25 + vacating</span><span style="color:var(--red)">₹10,000</span></div><div class="prog-track"><div class="prog-fill" style="width:83%;background:#E24B4A"></div></div></div>
+      <div class="prog-wrap"><div class="prog-lbl"><span>307 — party hall due</span><span style="color:var(--red)">₹3,100</span></div><div class="prog-track"><div class="prog-fill" style="width:26%;background:#F09595"></div></div></div>
+      <div style="background:var(--red-lt);border-radius:var(--rmd);padding:7px 10px;font-size:12px;color:var(--red-dk);font-weight:600;margin-top:4px">Total: ₹25,100</div>
     </div>
-  </div>
-  <div class="tbl-wrap">
-    <table class="tbl" style="min-width:300px">
-      <thead><tr><th>Date</th><th>Type</th><th>Qty</th><th class="r">Unit (₹)</th><th class="r">Amt (₹)</th></tr></thead>
-      <tbody id="tbody"></tbody>
-    </table>
-  </div>
-  <div style="margin-top:14px">
-    <div class="legend">
-      <span><span class="ld" style="background:var(--teal)"></span>Normal</span>
-      <span><span class="ld" style="background:var(--amber)"></span>Commercial</span>
-    </div>
-    <div style="position:relative;height:155px">
-      <canvas id="c6" role="img" aria-label="Stacked bar tanker costs by date May 2026"></canvas>
+    <div>
+      <div style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Corpus dues</div>
+      <div class="prog-wrap"><div class="prog-lbl"><span>Flat 407</span><span style="color:var(--purp)">₹35,000</span></div><div class="prog-track"><div class="prog-fill" style="width:100%;background:var(--purp)"></div></div></div>
+      <div style="background:var(--purp-lt);border-radius:var(--rmd);padding:7px 10px;font-size:12px;color:var(--purp-dk);font-weight:600;margin-bottom:4px">Total: ₹35,000 — clear in full</div>
+      <div class="infobox">ℹ ₹3,000/month from Jan 2024. Pay online: <strong>FLAT_NO_Month</strong> (e.g. 302_May)</div>
     </div>
   </div>
 </div>
 
-<!-- ── SECTION 6: Outstanding Dues ── -->
-<div class="sec-lbl">Outstanding Dues</div>
+<!-- ══════════ SEC 12: BANK RECON ══════════ -->
+<div class="sec">Bank Reconciliation — May 2026</div>
 <div class="card">
-  <div class="card-title">₹60,100 across 6 entries</div>
-  <div class="alert">⚠ Total outstanding <strong>₹60,100</strong>. New additions: Flats 102, 405, 501 (May maint.) and Flat 307 party hall ₹3,100. Flat 104 carries longest tail (Oct–Dec 25 + vacating). Flat 407 corpus ₹35,000 still unpaid.</div>
-
-  <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Maintenance dues</div>
-  <div class="prog-wrap">
-    <div class="prog-lbl"><span>306 Jan 26 + 102, 405, 501 May</span><span style="color:var(--red)">₹12,000</span></div>
-    <div class="prog-track"><div class="prog-fill" style="width:100%;background:#A32D2D"></div></div>
-  </div>
-  <div class="prog-wrap">
-    <div class="prog-lbl"><span>104 — Oct–Dec 25 + vacating</span><span style="color:var(--red)">₹10,000</span></div>
-    <div class="prog-track"><div class="prog-fill" style="width:83%;background:#E24B4A"></div></div>
-  </div>
-  <div class="prog-wrap">
-    <div class="prog-lbl"><span>307 — Party hall due</span><span style="color:var(--red)">₹3,100</span></div>
-    <div class="prog-track"><div class="prog-fill" style="width:26%;background:#F09595"></div></div>
-  </div>
-  <div class="dues-total-maint">Maintenance total due: ₹25,100</div>
-
-  <div class="divider"></div>
-
-  <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Corpus dues</div>
-  <div class="prog-wrap">
-    <div class="prog-lbl"><span>Flat 407</span><span style="color:var(--purp)">₹35,000</span></div>
-    <div class="prog-track"><div class="prog-fill" style="width:100%;background:var(--purp)"></div></div>
-  </div>
-  <div class="dues-total-corp">Corpus total: ₹35,000 — please clear in full</div>
-  <div class="infobox">ℹ Per GBM 9 Dec 2023: door lock exemption ₹500 withdrawn. All flats pay <strong>₹3,000/month</strong> from Jan 2024. Deposit online using remark <strong style="font-family:var(--mono)">FLAT_NO_Month</strong> (e.g. 302_May)</div>
-</div>
-
-<!-- ── SECTION 7: Bank Reconciliation ── -->
-<div class="sec-lbl">Bank Reconciliation</div>
-<div class="card">
-  <div class="card-title">May 2026</div>
-  <div class="recon-row">
-    <span>Opening balance (30 Apr 2026)</span>
-    <span class="recon-val">₹12,78,622.19</span>
-  </div>
-  <div class="recon-row">
-    <span style="color:var(--teal)">+ Online deposits</span>
-    <span class="recon-val" style="color:var(--teal)">+₹1,30,100.00</span>
-  </div>
-  <div class="recon-row">
-    <span style="color:var(--amber)">− Online expenses</span>
-    <span class="recon-val" style="color:var(--amber)">−₹85,547.82</span>
-  </div>
+  <div class="ctitle">May 2026</div>
+  <div class="recon-row"><span>Opening balance (30 Apr 2026)</span><span class="recon-val">₹12,78,622.19</span></div>
+  <div class="recon-row"><span style="color:var(--teal)">+ Online deposits</span><span class="recon-val" style="color:var(--teal)">+₹1,30,100.00</span></div>
+  <div class="recon-row"><span style="color:var(--amber)">− Online expenses</span><span class="recon-val" style="color:var(--amber)">−₹85,547.82</span></div>
   <div class="recon-row">
     <span>Computed closing balance</span>
-    <span class="recon-val" style="display:flex;align-items:center;gap:6px">
-      ₹13,23,174.37 <span class="pill">✓ Verified</span>
-    </span>
+    <span class="recon-val" style="display:flex;align-items:center;gap:6px">₹13,23,174.37 <span class="pill">✓ Bank verified</span></span>
   </div>
   <div class="recon-meta">
     <span>Cash in hand 31 May: <strong>₹3,231</strong></span>
@@ -398,91 +559,131 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14
 </div>
 
 </div><!-- /wrap -->
+<div class="footer">Sanvi Meadows Owners Welfare Association · Reg. 1369/2017 · May 2026 Maintenance Report<br>Generated for resident transparency · Please clear all outstanding dues promptly</div>
 
-<div class="footer">Sanvi Meadows OWA · Reg. 1369/2017 · May 2026 Maintenance Report</div>
-
+<!-- ══════════ SCRIPTS ══════════ -->
 <script>
-Chart.defaults.font.family="'DM Sans',sans-serif";
+const inr=v=>'₹'+Math.round(Number(v)).toLocaleString('en-IN');
 
+/* ── Tanker data ── */
 const tankers=[
-  {d:'6-May', t:'Normal',     q:1,a:1100},
-  {d:'6-May', t:'Commercial', q:1,a:2200},
-  {d:'24-May',t:'Commercial', q:1,a:2200},
-  {d:'25-May',t:'Normal',     q:1,a:1100},
-  {d:'27-May',t:'Commercial', q:1,a:2200},
-  {d:'28-May',t:'Normal',     q:1,a:1100},
-  {d:'28-May',t:'Commercial', q:1,a:2500},
-  {d:'28-May',t:'Commercial', q:1,a:2200},
-  {d:'29-May',t:'Normal',     q:1,a:1100},
-  {d:'30-May',t:'Normal',     q:1,a:1100},
-  {d:'30-May',t:'Normal',     q:1,a:1100},
-  {d:'31-May',t:'Commercial', q:1,a:2300},
+  {d:'6-May',t:'Normal',q:1,a:1100},{d:'6-May',t:'Commercial',q:1,a:2200},
+  {d:'24-May',t:'Commercial',q:1,a:2200},{d:'25-May',t:'Normal',q:1,a:1100},
+  {d:'27-May',t:'Commercial',q:1,a:2200},{d:'28-May',t:'Normal',q:1,a:1100},
+  {d:'28-May',t:'Commercial',q:1,a:2500},{d:'28-May',t:'Commercial',q:1,a:2200},
+  {d:'29-May',t:'Normal',q:1,a:1100},{d:'30-May',t:'Normal',q:1,a:1100},
+  {d:'30-May',t:'Normal',q:1,a:1100},{d:'31-May',t:'Commercial',q:1,a:2300}
 ];
-
 function renderTable(f){
   const rows=f==='all'?tankers:tankers.filter(r=>r.t===f);
   let tot=0;
   document.getElementById('tbody').innerHTML=rows.map(r=>{
     tot+=r.a;
-    return `<tr><td>${r.d}</td><td><span class="badge ${r.t==='Normal'?'bg':'ba'}">${r.t}</span></td><td>${r.q}</td><td class="r">${Math.round(r.a/r.q).toLocaleString('en-IN')}</td><td class="r">${r.a.toLocaleString('en-IN')}</td></tr>`;
+    return`<tr><td>${r.d}</td><td><span class="badge ${r.t==='Normal'?'bg':'ba'}">${r.t}</span></td><td>${r.q}</td><td class="r">${Math.round(r.a/r.q).toLocaleString('en-IN')}</td><td class="r">${r.a.toLocaleString('en-IN')}</td></tr>`;
   }).join('')+`<tr class="tot"><td colspan="4">Total</td><td class="r">${tot.toLocaleString('en-IN')}</td></tr>`;
 }
 renderTable('all');
-
 function filterT(f){
   document.querySelectorAll('.chip').forEach(c=>c.className='chip off');
   document.getElementById(f==='all'?'f-all':f==='Normal'?'f-n':'f-c').className='chip on';
   renderTable(f);
 }
 
-const inr=v=>'₹'+Number(v).toLocaleString('en-IN');
+/* ── Collapsible tanker ── */
+let tankerOpen=false;
+function toggleTanker(){
+  tankerOpen=!tankerOpen;
+  document.getElementById('tanker-body').className='tanker-body'+(tankerOpen?' open':'');
+  document.getElementById('tanker-toggle').className='tanker-toggle'+(tankerOpen?' t-open':'');
+  document.getElementById('toggle-lbl').textContent=tankerOpen?'Hide details':'Show details';
+  document.getElementById('tanker-hdr').setAttribute('aria-expanded',tankerOpen);
+  if(tankerOpen&&!window._tInit){window._tInit=true;setTimeout(initTankerCharts,60);}
+}
+function initTankerCharts(){
+  new Chart(document.getElementById('c4'),{
+    type:'doughnut',
+    data:{labels:['Normal','Commercial'],datasets:[{data:[7,5],backgroundColor:['#1D9E75','#854F0B'],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.label+': '+c.parsed+' trips'}}}}
+  });
+  const td=['6-May','24-May','25-May','27-May','28-May','29-May','30-May','31-May'];
+  const nm={},cm={};
+  tankers.forEach(r=>{if(r.t==='Normal')nm[r.d]=(nm[r.d]||0)+r.a;else cm[r.d]=(cm[r.d]||0)+r.a;});
+  new Chart(document.getElementById('c6'),{
+    type:'bar',
+    data:{labels:td,datasets:[
+      {label:'Normal',data:td.map(d=>nm[d]||0),backgroundColor:'#1D9E75',borderWidth:0,borderRadius:3},
+      {label:'Commercial',data:td.map(d=>cm[d]||0),backgroundColor:'#854F0B',borderWidth:0,borderRadius:3}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+inr(c.parsed.y)}}},scales:{x:{stacked:true,grid:{display:false},ticks:{font:{size:10},autoSkip:false,maxRotation:45}},y:{stacked:true,grid:{color:'rgba(128,128,128,0.08)'},ticks:{callback:v=>'₹'+Math.round(v/1000)+'k',font:{size:10}}}}}
+  });
+}
 
-// C1 — Income vs expense donut
-new Chart(document.getElementById('c1'),{
-  type:'doughnut',
-  data:{labels:['Collected','Expenses'],datasets:[{data:[142346,94563],backgroundColor:['#1D9E75','#854F0B'],borderWidth:0}]},
-  options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.label+': '+inr(c.parsed)+' ('+(c.parsed/236909*100).toFixed(1)+'%)'}}}}
-});
+/* ── Chart defaults ── */
+Chart.defaults.font.family="'DM Sans',sans-serif";
+Chart.defaults.font.size=11;
 
-// C2 — Expense bar
-new Chart(document.getElementById('c2'),{
-  type:'bar',
-  data:{labels:['Salaries','Water','Diesel','Other'],datasets:[{data:[57000,22200,12000,3363],backgroundColor:['#854F0B','#BA7517','#EF9F27','#888780'],borderWidth:0,borderRadius:5}]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>inr(c.parsed.y)}}},scales:{x:{grid:{display:false},ticks:{font:{size:11}}},y:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{callback:v=>'₹'+Math.round(v/1000)+'k',font:{size:10}}}}}
-});
-
-// C3 — Payment mode
-new Chart(document.getElementById('c3'),{
-  type:'doughnut',
-  data:{labels:['Online','Cash'],datasets:[{data:[130100,12246],backgroundColor:['#1D9E75','#854F0B'],borderWidth:0}]},
-  options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.label+': '+inr(c.parsed)+' ('+(c.parsed/142346*100).toFixed(1)+'%)'}}}}
-});
-
-// C4 — Tanker trips
-new Chart(document.getElementById('c4'),{
-  type:'doughnut',
-  data:{labels:['Normal','Commercial'],datasets:[{data:[7,5],backgroundColor:['#1D9E75','#854F0B'],borderWidth:0}]},
-  options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.label+': '+c.parsed+' trips'}}}}
-});
-
-// C5 — Dues
-new Chart(document.getElementById('c5'),{
-  type:'doughnut',
-  data:{labels:['Maintenance','Corpus'],datasets:[{data:[25100,35000],backgroundColor:['#A32D2D','#3C3489'],borderWidth:0}]},
-  options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.label+': '+inr(c.parsed)+' ('+(c.parsed/60100*100).toFixed(1)+'%)'}}}}
-});
-
-// C6 — Tanker stacked bar
-const tdates=['6-May','24-May','25-May','27-May','28-May','29-May','30-May','31-May'];
-const nm={},cm={};
-tankers.forEach(r=>{if(r.t==='Normal')nm[r.d]=(nm[r.d]||0)+r.a;else cm[r.d]=(cm[r.d]||0)+r.a;});
-new Chart(document.getElementById('c6'),{
-  type:'bar',
-  data:{labels:tdates,datasets:[
-    {label:'Normal',   data:tdates.map(d=>nm[d]||0),backgroundColor:'#1D9E75',borderWidth:0,borderRadius:3},
-    {label:'Commercial',data:tdates.map(d=>cm[d]||0),backgroundColor:'#854F0B',borderWidth:0,borderRadius:3}
+/* ── Solar ROI ── */
+const roiPoints=[0,6,12,18,24,29,36,42,48,51];
+const roiLabels=['Jan 24','Jul 24','Jan 25','Jul 25','Jan 26','May 26','Jan 27','Jul 27','Jan 28','Mar 28'];
+new Chart(document.getElementById('cRoi'),{
+  type:'line',
+  data:{labels:roiLabels,datasets:[
+    {label:'Actual savings',data:roiPoints.map((m,i)=>i<=5?m*18500:null),borderColor:'#1D9E75',backgroundColor:'rgba(29,158,117,0.1)',fill:true,tension:.4,borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#1D9E75',spanGaps:false},
+    {label:'Projected savings',data:roiPoints.map((m,i)=>i>=5?m*18500:null),borderColor:'#1D9E75',backgroundColor:'rgba(29,158,117,0.04)',fill:true,tension:.4,borderWidth:1.5,pointRadius:3,pointBackgroundColor:'#1D9E75',borderDash:[5,3],spanGaps:false},
+    {label:'Investment ₹9,50,000',data:roiPoints.map(()=>950000),borderColor:'#A32D2D',backgroundColor:'transparent',borderWidth:1.5,pointRadius:0,borderDash:[4,3]}
   ]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+inr(c.parsed.y)}}},scales:{x:{stacked:true,grid:{display:false},ticks:{font:{size:10},autoSkip:false,maxRotation:45}},y:{stacked:true,grid:{color:'rgba(0,0,0,0.05)'},ticks:{callback:v=>'₹'+Math.round(v/1000)+'k',font:{size:10}}}}}
+  options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.parsed.y!=null?inr(c.parsed.y):'—')}}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{grid:{color:'rgba(128,128,128,0.08)'},ticks:{callback:v=>'₹'+Math.round(v/100000).toFixed(1)+'L',font:{size:10}}}}}
+});
+
+/* ── Corpus bar ── */
+new Chart(document.getElementById('cCorpus'),{
+  type:'bar',
+  data:{labels:['Actual balance','Without savings','Corpus protected'],datasets:[{data:[1323174,727274,595900],backgroundColor:['#1D9E75','#A32D2D','rgba(133,79,11,0.55)'],borderWidth:0,borderRadius:5}]},
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>inr(c.parsed.x)}}},scales:{x:{grid:{color:'rgba(128,128,128,0.08)'},ticks:{callback:v=>'₹'+Math.round(v/100000).toFixed(1)+'L',font:{size:10}}},y:{grid:{display:false},ticks:{font:{size:11}}}}}
+});
+
+/* ── Combined timeline ── */
+const tl=['Jan 22','Jan 23','Jan 24','Jan 25','May 26','Mar 28'];
+const tlAMo=[0,12,24,36,54,80];
+const tlSMo=[0,0,0,12,29,51];
+const tlA=tlAMo.map(m=>m*1100);
+const tlS=tlSMo.map(m=>m*18500);
+const tlC=tlA.map((a,i)=>a+tlS[i]);
+new Chart(document.getElementById('cTimeline'),{
+  type:'line',
+  data:{labels:tl,datasets:[
+    {label:'Adonmo',data:tlA,borderColor:'#3C3489',backgroundColor:'rgba(60,52,137,0.06)',fill:true,tension:.4,borderWidth:2,pointRadius:3,pointBackgroundColor:'#3C3489'},
+    {label:'Solar',data:tlS,borderColor:'#1D9E75',backgroundColor:'rgba(29,158,117,0.07)',fill:true,tension:.4,borderWidth:2,pointRadius:3,pointBackgroundColor:'#1D9E75'},
+    {label:'Combined',data:tlC,borderColor:'#854F0B',backgroundColor:'transparent',fill:false,tension:.4,borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#854F0B',borderDash:[5,3]},
+    {label:'Investment',data:tl.map(()=>950000),borderColor:'#A32D2D',backgroundColor:'transparent',borderWidth:1.5,pointRadius:0,borderDash:[4,3]}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+inr(c.parsed.y)}}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{grid:{color:'rgba(128,128,128,0.08)'},ticks:{callback:v=>'₹'+Math.round(v/100000).toFixed(1)+'L',font:{size:10}}}}}
+});
+
+/* ── Gate automation ── */
+const gm=Array.from({length:18},(_,i)=>i+1);
+new Chart(document.getElementById('cGate'),{
+  type:'line',
+  data:{labels:gm.map(m=>'M'+m),datasets:[
+    {label:'Conservative ₹15k/mo',data:gm.map(m=>m*15000),borderColor:'#1D9E75',backgroundColor:'rgba(29,158,117,0.07)',fill:true,tension:.4,borderWidth:2,pointRadius:2,pointBackgroundColor:'#1D9E75'},
+    {label:'Optimistic ₹20k/mo',data:gm.map(m=>m*20000),borderColor:'#0F6E56',backgroundColor:'transparent',fill:false,tension:.4,borderWidth:1.5,pointRadius:0,borderDash:[4,2]},
+    {label:'Investment ₹1,80,000',data:gm.map(()=>180000),borderColor:'#A32D2D',backgroundColor:'transparent',borderWidth:1.5,pointRadius:0,borderDash:[5,3]}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+inr(c.parsed.y)}}},scales:{x:{grid:{display:false},ticks:{font:{size:10},autoSkip:true,maxTicksLimit:9}},y:{grid:{color:'rgba(128,128,128,0.08)'},ticks:{callback:v=>'₹'+Math.round(v/1000)+'k',font:{size:10}}}}}
+});
+
+/* ── Variable expense bars ── */
+new Chart(document.getElementById('cVarCat'),{
+  type:'bar',
+  data:{
+    labels:['Feb 26','Mar 26','Apr 26','May 26'],
+    datasets:[
+      {label:'Water tankers',data:[3200,26100,27300,20200],backgroundColor:'#854F0B',borderWidth:0,borderRadius:3},
+      {label:'Diesel',data:[6500,9000,12100,12000],backgroundColor:'#BA7517',borderWidth:0,borderRadius:3},
+      {label:'Other',data:[17954,23621,4328,5363],backgroundColor:'#888780',borderWidth:0,borderRadius:3}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,callbacks:{label:c=>c.dataset.label+': '+inr(c.parsed.y)}}},scales:{x:{grid:{display:false},ticks:{font:{size:11}}},y:{grid:{color:'rgba(128,128,128,0.08)'},ticks:{callback:v=>'₹'+Math.round(v/1000)+'k',font:{size:10}}}}}
 });
 </script>
 </body>
