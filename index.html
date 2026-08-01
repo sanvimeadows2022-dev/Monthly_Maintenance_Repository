@@ -3,935 +3,564 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sanvi Meadows — Monthly Dashboard</title>
+<title>Sanvi Meadows — Financial Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-:root {
-  --primary: #1a3c5e;
-  --primary-light: #2563a8;
-  --bg: #f0f4f8;
-  --card: #ffffff;
-  --border: #dce3ec;
-  --text: #1e293b;
-  --muted: #64748b;
-  --danger: #dc2626;
-  --success: #16a34a;
-  --solar: #f59e0b;
-  --lift: #0891b2;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; }
+  :root{
+    --bg:#F6F2E9; --paper:#FFFFFF; --ink:#22302A; --ink-soft:#5B6B62;
+    --pine:#2E6E96; --pine-light:#5A93B8; --pine-pale:#EAF4FA;
+    --header-bg:#EAF4FB; --header-bg2:#DCEEFA; --header-text:#1B3F55; --header-sub:#3D6A84;
+    --gold:#C1861F; --gold-light:#F3E1BC;
+    --brick:#AE4A2C; --brick-light:#F4DCD1;
+    --teal:#3B6E71; --teal-light:#DCEAEA;
+    --green:#2E7D4F; --green-light:#DFF0E5;
+    --line:#E3D9C4; --line-soft:#EDE6D6;
+    --radius:14px;
+    --shadow: 0 1px 2px rgba(30,61,53,0.06), 0 4px 16px rgba(30,61,53,0.05);
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; background:var(--bg); color:var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height:1.45; }
+  h1,h2,h3{ font-family: Georgia, "Times New Roman", serif; letter-spacing:-0.01em; }
+  .wrap{ max-width: 1180px; margin: 0 auto; padding: 0 0 64px; }
 
-/* HEADER */
-.banner {
-  background: linear-gradient(135deg, #e8f4fd 0%, #dbeeff 50%, #e0f7f4 100%);
-  color: #0f2744; padding: 0; position: relative; overflow: hidden;
-  border-bottom: 3px solid #38bdf8;
-}
-.banner-inner { position: relative; z-index: 2; padding: 20px 24px 16px; }
-.banner::before { content:''; position:absolute; top:-50px; right:-70px; width:260px; height:260px; background:rgba(56,189,248,0.12); border-radius:50%; }
-.banner::after  { content:''; position:absolute; bottom:-50px; left:-50px; width:220px; height:220px; background:rgba(16,185,129,0.08); border-radius:50%; }
-.banner-top { display:flex; align-items:flex-start; gap:16px; flex-wrap:wrap; }
-.banner-logo { width:52px; height:52px; background:linear-gradient(135deg,#0ea5e9,#10b981); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:26px; flex-shrink:0; box-shadow:0 4px 12px rgba(14,165,233,0.3); }
-.banner-title h1 { font-size:1.5rem; font-weight:800; letter-spacing:0.2px; color:#0c2340; }
-.banner-title p  { font-size:0.78rem; color:#3d6b8c; margin-top:3px; }
-.banner-meta { margin-left:auto; text-align:right; flex-shrink:0; }
-.banner-badge { display:inline-block; background:linear-gradient(135deg,#0ea5e9,#0284c7); color:#fff; border-radius:20px; padding:5px 16px; font-size:0.82rem; font-weight:700; box-shadow:0 2px 8px rgba(14,165,233,0.35); }
-.banner-reg { font-size:0.72rem; color:#5a8aaa; margin-top:5px; }
-.banner-divider { border:none; border-top:1px solid rgba(14,165,233,0.2); margin:12px 0 10px; }
-.banner-stats { display:flex; gap:20px; flex-wrap:wrap; }
-.bstat { text-align:center; }
-.bstat-val { font-size:1.1rem; font-weight:800; color:#0c2340; }
-.bstat-lbl { font-size:0.68rem; color:#4a7c9e; text-transform:uppercase; letter-spacing:0.5px; margin-top:2px; }
-.bstat-sep { width:1px; background:rgba(14,165,233,0.25); align-self:stretch; margin:2px 0; }
+  /* Header */
+  .header{ background: linear-gradient(135deg, var(--header-bg), var(--header-bg2)); color:var(--header-text);
+    padding: 14px 20px 16px; position:sticky; top:0; z-index:20; border-bottom:1px solid #CFE6F5; box-shadow:0 2px 10px rgba(46,110,150,0.08); }
+  .header-top{ display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; max-width:1180px; margin:0 auto; text-align:center; }
+  .header h1{ font-size:19px; margin:0 0 1px; color:var(--header-text); font-weight:700; }
+  .header p.addr{ margin:0; font-size:11.5px; color:var(--header-sub); }
+  .summary-bar{ display:flex; gap:18px; flex-wrap:wrap; justify-content:center; margin-top:9px; max-width:1180px; margin-left:auto; margin-right:auto; }
+  .summary-item{ font-size:11px; color:var(--header-sub); text-align:center; }
+  .summary-item b{ display:block; font-size:15px; color:var(--header-text); font-family:Arial, Helvetica, sans-serif; font-weight:700; margin-top:1px; }
+  .month-pills{ display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin-top:10px; max-width:1180px; margin-left:auto; margin-right:auto; }
+  .pill{ border:1px solid rgba(27,63,85,0.2); background:rgba(255,255,255,0.6); color:var(--header-text);
+    padding:5px 12px; border-radius:999px; font-size:12.5px; cursor:pointer; transition:.15s; font-weight:600; }
+  .pill:hover{ background:#fff; }
+  .pill.active{ background:var(--pine); border-color:var(--pine); color:#fff; }
 
-/* MONTH PILLS */
-.month-filter { background:var(--card); border-bottom:1px solid var(--border); padding:10px 16px; display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
-.month-filter-label { font-size:0.72rem; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-right:4px; }
-.pill { padding:5px 14px; border-radius:20px; border:1.5px solid var(--border); background:transparent; cursor:pointer; font-size:0.78rem; font-weight:600; color:var(--muted); transition:all 0.18s; }
-.pill:hover { border-color:var(--primary-light); color:var(--primary-light); }
-.pill.active { background:var(--primary); border-color:var(--primary); color:#fff; }
+  .content{ padding: 18px 16px 0; max-width:1180px; margin:0 auto; }
 
-/* LAYOUT */
-.container { max-width:1200px; margin:0 auto; padding:16px; }
-.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+  /* KPI grid */
+  .kpi-grid{ display:grid; grid-template-columns: repeat(6, 1fr); gap:10px; margin-bottom:16px; }
+  .kpi{ background:var(--paper); border-radius:var(--radius); padding:14px 14px 12px;
+    box-shadow:var(--shadow); border-top:3px solid var(--pine); }
+  .kpi.gold{ border-top-color: var(--gold); } .kpi.brick{ border-top-color: var(--brick); } .kpi.teal{ border-top-color: var(--teal); }
+  .kpi .label{ font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); font-weight:700; margin-bottom:6px;}
+  .kpi .value{ font-size:19px; font-weight:700; color:var(--pine); font-family: Georgia, serif; }
+  .kpi .sub{ font-size:11px; color:var(--ink-soft); margin-top:2px; }
 
-/* ALERT BANNERS */
-.alert-banner { border-radius:10px; overflow:hidden; margin-bottom:12px; border:1.5px solid; }
-.alert-header { display:flex; align-items:center; gap:10px; padding:10px 14px; cursor:pointer; font-weight:600; font-size:0.85rem; user-select:none; }
-.alert-header .chevron { margin-left:auto; transition:transform 0.25s; font-size:0.7rem; }
-.alert-header.open .chevron { transform:rotate(180deg); }
-.alert-body { padding:10px 14px 12px; display:none; border-top:1px solid; }
-.alert-body.open { display:block; }
-.alert-danger  { border-color:#fca5a5; background:#fff5f5; }
-.alert-danger .alert-header  { background:#fee2e2; color:var(--danger); }
-.alert-danger .alert-body    { border-color:#fca5a5; background:#fff5f5; }
-.alert-solar  { border-color:#fcd34d; background:#fffbeb; }
-.alert-solar .alert-header   { background:#fef3c7; color:#92400e; }
-.alert-solar .alert-body     { border-color:#fcd34d; background:#fffbeb; }
-.alert-lift   { border-color:#7dd3fc; background:#f0f9ff; }
-.alert-lift .alert-header    { background:#e0f2fe; color:#075985; }
-.alert-lift .alert-body      { border-color:#7dd3fc; background:#f0f9ff; }
-.alert-adonmo { border-color:#a5b4fc; background:#f5f3ff; }
-.alert-adonmo .alert-header  { background:#ede9fe; color:#4c1d95; }
-.alert-adonmo .alert-body    { border-color:#a5b4fc; background:#f5f3ff; }
+  .card{ background:var(--paper); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px 20px; margin-bottom:16px; }
+  .card h2{ font-size:17px; margin:0 0 4px; color:var(--pine); }
+  .card .desc{ font-size:12.5px; color:var(--ink-soft); margin:0 0 12px; }
+  .grid2{ display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+  .grid3{ display:grid; grid-template-columns: 1fr 1fr 1fr; gap:16px; }
 
-/* CHIPS — shared style */
-.chip-group { display:flex; flex-wrap:wrap; gap:8px; }
-.chip {
-  position:relative;
-  display:inline-flex; flex-direction:column; align-items:center; justify-content:center;
-  width:74px; height:64px;
-  border-radius:12px; border:2px solid;
-  font-size:0.8rem; font-weight:700;
-  cursor:pointer; text-align:center;
-  transition: transform 0.15s, box-shadow 0.15s;
-}
-.chip:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,0.12); }
-.chip-flat-num { font-size:1rem; font-weight:800; line-height:1; }
-.chip-flat-sub { font-size:0.66rem; font-weight:500; opacity:0.8; margin-top:3px; }
-.chip-due     { background:#fff0f0; color:var(--danger);  border-color:#fca5a5; }
-.chip-cash    { background:#f0fdf4; color:var(--success); border-color:#86efac; }
-.chip-advance { background:#eff6ff; color:#1d4ed8;        border-color:#93c5fd; }
-.chip-cleared { background:#f0fdfa; color:#0f766e;        border-color:#5eead4; }
-.chip-party   { background:#fdf4ff; color:#7e22ce;        border-color:#d8b4fe; }
-.chip .tooltip {
-  display:none; position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%);
-  background:#1e293b; color:#fff; padding:6px 10px; border-radius:7px;
-  font-size:0.75rem; white-space:nowrap; z-index:200; pointer-events:none;
-  box-shadow:0 4px 12px rgba(0,0,0,0.2);
-}
-.chip .tooltip::after { content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%); border:5px solid transparent; border-top-color:#1e293b; }
-.chip:hover .tooltip { display:block; }
+  .banner{ border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:12px; overflow:hidden; background:var(--paper); }
+  .banner-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 18px; cursor:pointer; user-select:none; }
+  .banner.overdue .banner-head{ background: var(--brick-light); }
+  .banner.solar .banner-head{ background: var(--gold-light); }
+  .banner.adonmo .banner-head{ background: var(--teal-light); }
+  .banner-head .htitle{ font-weight:700; font-size:14.5px; color:var(--ink); display:flex; align-items:center; gap:8px;}
+  .banner-head .hamount{ font-weight:700; font-size:16px; font-family: Georgia, serif; }
+  .banner.overdue .hamount{ color:var(--brick); } .banner.solar .hamount{ color:var(--gold); } .banner.adonmo .hamount{ color:var(--teal); }
+  .chevron{ transition: transform .2s ease; font-size:12px; color:var(--ink-soft); }
+  .banner.collapsed .chevron{ transform: rotate(-90deg); }
+  .banner-body{ padding: 14px 18px 18px; border-top:1px solid var(--line-soft); }
+  .banner.collapsed .banner-body{ display:none; }
 
-/* KPI GRID */
-.kpi-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:12px; margin-bottom:16px; }
-.kpi-card { background:var(--card); border-radius:12px; padding:14px 16px; border:1px solid var(--border); position:relative; overflow:hidden; }
-.kpi-card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--kpi-color, var(--primary)); }
-.kpi-icon  { font-size:1.4rem; margin-bottom:6px; }
-.kpi-label { font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted); margin-bottom:4px; }
-.kpi-value { font-size:1.25rem; font-weight:800; color:var(--text); }
-.kpi-sub   { font-size:0.7rem; color:var(--muted); margin-top:2px; }
+  .progress-track{ height:10px; background:var(--line-soft); border-radius:6px; overflow:hidden; margin: 8px 0 4px;}
+  .progress-fill{ height:100%; border-radius:6px; }
+  .fill-gold{ background: linear-gradient(90deg, var(--gold), #E0A83F); }
+  .fill-pine{ background: linear-gradient(90deg, var(--pine), var(--pine-light)); }
+  .progress-label{ font-size:12px; color:var(--ink-soft); display:flex; justify-content:space-between; }
 
-/* CARD */
-.card { background:var(--card); border-radius:12px; border:1px solid var(--border); padding:16px; margin-bottom:12px; }
-.card-title { font-size:0.85rem; font-weight:700; color:var(--text); margin-bottom:12px; display:flex; align-items:center; gap:6px; }
+  .chip-row{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+  .chip{ position:relative; display:inline-flex; align-items:center; gap:5px;
+    background:var(--pine-pale); color:var(--pine); border:1px solid #cfe0d8;
+    padding:6px 11px; border-radius:999px; font-size:13px; font-weight:700; cursor:pointer; }
+  .banner.overdue .chip{ background: #FBEAE2; color:var(--brick); border-color:#f0c9b8;}
+  .chip.cash{ background: var(--green-light); color:var(--green); border-color:#bfe3cd; }
+  .chip .pop{ display:none; position:absolute; bottom: calc(100% + 8px); left:50%; transform:translateX(-50%);
+    background:var(--pine); color:#fff; font-size:12px; font-weight:600; padding:6px 10px;
+    border-radius:8px; white-space:nowrap; box-shadow:var(--shadow); z-index:5; }
+  .banner.overdue .chip .pop{ background:var(--brick); }
+  .chip.cash .pop{ background:var(--green); }
+  .chip .pop::after{ content:""; position:absolute; top:100%; left:50%; transform:translateX(-50%);
+    border:6px solid transparent; border-top-color: var(--pine); }
+  .banner.overdue .chip .pop::after{ border-top-color: var(--brick); }
+  .chip.cash .pop::after{ border-top-color: var(--green); }
+  .chip.open .pop{ display:block; }
 
-/* PROGRESS BAR */
-.progress-bar { background:#e2e8f0; border-radius:6px; height:10px; overflow:hidden; }
-.progress-fill { height:100%; border-radius:6px; transition:width 0.5s; }
+  .chart-box{ position:relative; height: 320px; }
+  .chart-box.small{ height:260px; }
 
-/* TABLE */
-.data-table { width:100%; border-collapse:collapse; font-size:0.82rem; }
-.data-table th { text-align:left; padding:7px 10px; background:var(--bg); color:var(--muted); font-weight:700; font-size:0.7rem; text-transform:uppercase; border-bottom:1px solid var(--border); }
-.data-table td { padding:7px 10px; border-bottom:1px solid var(--border); }
-.data-table tr:last-child td { border-bottom:none; }
-.data-table tr:hover td { background:#f8fafc; }
-.badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:0.7rem; font-weight:700; }
-.badge-red    { background:#fee2e2; color:var(--danger); }
-.badge-yellow { background:#fef3c7; color:#92400e; }
+  table{ width:100%; border-collapse:collapse; font-size:13.5px; }
+  th, td{ text-align:left; padding:8px 6px; border-bottom:1px solid var(--line-soft); }
+  th{ color:var(--ink-soft); font-size:11px; text-transform:uppercase; letter-spacing:.04em; }
+  tr:last-child td{ border-bottom:none; }
+  .amt{ text-align:right; font-weight:700; color:var(--pine); }
+  .adhoc-tag{ font-size:10px; background:#E7E1D3; color:#6b6350; padding:2px 6px; border-radius:5px; margin-left:6px; font-weight:700; }
 
-/* INNER PILLS — inside cards, independent month selector */
-.inner-pills { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:12px; }
-.ipill { padding:3px 10px; border-radius:14px; border:1.5px solid var(--border); background:transparent; cursor:pointer; font-size:0.72rem; font-weight:600; color:var(--muted); transition:all 0.15s; }
-.ipill:hover { border-color:var(--primary-light); color:var(--primary-light); }
-.ipill.active { background:var(--primary); border-color:var(--primary); color:#fff; }
+  .rank-list .row{ display:flex; align-items:center; gap:10px; padding:7px 0; border-bottom:1px dashed var(--line); font-size:13px; }
+  .rank-list .row:last-child{ border-bottom:none; }
+  .rank-list .name{ flex: 0 0 190px; font-weight:600; }
+  .rank-list .bar-track{ flex:1; height:8px; background:var(--line-soft); border-radius:4px; overflow:hidden; }
+  .rank-list .bar-fill{ height:100%; background:var(--pine); border-radius:4px; }
+  .rank-list .pct{ flex:0 0 42px; text-align:right; color:var(--ink-soft); font-size:11.5px; }
+  .rank-list .val{ flex:0 0 90px; text-align:right; font-weight:700; color:var(--pine); }
 
-/* ─── CREATIVE EXPENSE BREAKDOWN ─── */
-.breakdown-tabs { display:flex; gap:4px; margin-bottom:14px; flex-wrap:wrap; }
-.btab { padding:4px 10px; border-radius:6px; border:1.5px solid var(--border); background:transparent; cursor:pointer; font-size:0.75rem; font-weight:600; color:var(--muted); transition:all 0.15s; }
-.btab.active { background:var(--primary); border-color:var(--primary); color:#fff; }
+  .stat-line{ display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px dashed var(--line); font-size:14px;}
+  .stat-line:last-child{ border-bottom:none; }
+  .stat-line .k{ color:var(--ink-soft); }
+  .stat-line .v{ font-weight:700; color:var(--pine); }
+  .stat-line .v.neg{ color:var(--brick); } .stat-line .v.pos{ color:var(--green); }
 
-/* donut + cards layout */
-.breakdown-layout { display:grid; grid-template-columns:200px 1fr; gap:20px; align-items:start; }
-.breakdown-donut-wrap { position:relative; width:200px; height:200px; flex-shrink:0; }
-.breakdown-donut-wrap canvas { display:block; }
-.donut-center { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; pointer-events:none; }
-.donut-total-val { font-size:1.1rem; font-weight:800; color:var(--text); line-height:1; }
-.donut-total-lbl { font-size:0.65rem; color:var(--muted); margin-top:3px; text-transform:uppercase; letter-spacing:0.4px; }
+  .subtile-pills{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+  .subtile-pills .pill2{ border:1px solid var(--line); background:var(--bg); color:var(--ink-soft);
+    padding:4px 10px; border-radius:999px; font-size:12px; cursor:pointer; font-weight:600; }
+  .subtile-pills .pill2.active{ background:var(--pine); border-color:var(--pine); color:#fff; }
+  .empty-note{ color:var(--ink-soft); font-size:13px; font-style:italic; padding:10px 0; }
 
-.breakdown-list { display:flex; flex-direction:column; gap:6px; }
-.bl-item {
-  display:flex; align-items:center; gap:10px;
-  padding:8px 12px; border-radius:8px;
-  background:var(--bg); border:1px solid transparent;
-  cursor:default; transition:border-color 0.15s;
-}
-.bl-item.adhoc { background:#f8f8fb; }
-.bl-item:hover { border-color:var(--border); }
-.bl-dot { width:10px; height:10px; border-radius:3px; flex-shrink:0; }
-.bl-label { flex:1; font-size:0.78rem; color:var(--text); font-weight:500; }
-.bl-pct { font-size:0.72rem; color:var(--muted); width:34px; text-align:right; flex-shrink:0; }
-.bl-bar-wrap { width:80px; flex-shrink:0; }
-.bl-bar-track { background:#e2e8f0; border-radius:4px; height:6px; }
-.bl-bar-fill  { height:6px; border-radius:4px; transition:width 0.4s; }
-.bl-val { font-size:0.8rem; font-weight:700; width:72px; text-align:right; flex-shrink:0; }
-.adhoc-tag { font-size:0.62rem; background:#e2e8f0; color:var(--muted); border-radius:4px; padding:1px 5px; margin-left:4px; font-weight:600; flex-shrink:0; }
+  .note-card{ border-left:4px solid var(--gold); background:var(--gold-light); border-radius:10px; padding:10px 14px; margin-bottom:10px; font-size:13.5px; }
+  .note-card b{ color:var(--pine); }
 
-/* ROI */
-.roi-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
-.roi-big { font-size:1.6rem; font-weight:800; color:var(--solar); }
+  footer{ text-align:center; color:var(--ink-soft); font-size:12px; margin-top:20px; }
 
-/* RESPONSIVE */
-@media (max-width:700px) {
-  .breakdown-layout { grid-template-columns:1fr; }
-  .breakdown-donut-wrap { margin:0 auto; }
-  .bl-bar-wrap { display:none; }
-}
-@media (max-width:640px) {
-  .banner-top { gap:10px; }
-  .banner-title h1 { font-size:1.15rem; }
-  .banner-meta { text-align:left; margin-left:0; }
-  .banner-stats { gap:14px; }
-  .grid-2, .grid-3 { grid-template-columns:1fr; }
-  .kpi-grid { grid-template-columns:repeat(2,1fr); }
-  .chip { width:66px; height:58px; }
-  .chip-flat-num { font-size:0.9rem; }
-}
-@media (max-width:400px) {
-  .pill { padding:4px 10px; font-size:0.72rem; }
-  .chip { width:60px; height:54px; }
-}
+  @media (max-width: 900px){ .kpi-grid{ grid-template-columns: repeat(3, 1fr); } .grid2, .grid3{ grid-template-columns: 1fr; } }
+  @media (max-width: 520px){
+    .kpi-grid{ grid-template-columns: repeat(2, 1fr); } .kpi .value{ font-size:16px; }
+    .card{ padding:14px; } .chart-box{ height:260px; }
+    .rank-list .name{ flex-basis:110px; font-size:12px; } .rank-list .val{ flex-basis:70px; }
+  }
 </style>
 </head>
 <body>
-
-<!-- HEADER BANNER -->
-<div class="banner">
-  <div class="banner-inner">
-    <div class="banner-top">
-      <div class="banner-logo">🏢</div>
-      <div class="banner-title">
-        <h1>Sanvi Meadows</h1>
-        <p>Owners Welfare Association · Bhagya Lakshmi Nagar Phase 2, Serilingampalli, Hyderabad – 500019</p>
-      </div>
-      <div class="banner-meta">
-        <div class="banner-badge" id="currentMonthBadge">Jun 2026</div>
-        <div class="banner-reg">Reg. No: 1369 of 2017</div>
+<div class="wrap">
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <h1>Sanvi Meadows Owners Welfare Association</h1>
+        <p class="addr">Bhagya Lakshmi Nagar Phase 2, Serilingampalli, Hyderabad – 500019 · Reg. No. 1369 of 2017</p>
       </div>
     </div>
-    <hr class="banner-divider">
-    <div class="banner-stats">
-      <div class="bstat"><div class="bstat-val">35</div><div class="bstat-lbl">Total Flats</div></div>
-      <div class="bstat-sep"></div>
-      <div class="bstat"><div class="bstat-val" id="hdr-flats">—</div><div class="bstat-lbl">Paid This Month</div></div>
-      <div class="bstat-sep"></div>
-      <div class="bstat"><div class="bstat-val" id="hdr-balance">—</div><div class="bstat-lbl">Bank Balance</div></div>
-      <div class="bstat-sep"></div>
-      <div class="bstat"><div class="bstat-val" id="hdr-dues">—</div><div class="bstat-lbl">Outstanding Dues</div></div>
-      <div class="bstat-sep"></div>
-      <div class="bstat"><div class="bstat-val">₹18,500</div><div class="bstat-lbl">Solar Saving/Mo</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- MONTH PILLS -->
-<div class="month-filter">
-  <span class="month-filter-label">Month</span>
-  <button class="pill" onclick="selectMonth(-1)">All</button>
-  <button class="pill" onclick="selectMonth(0)">Jan 26</button>
-  <button class="pill" onclick="selectMonth(1)">Feb 26</button>
-  <button class="pill" onclick="selectMonth(2)">Mar 26</button>
-  <button class="pill" onclick="selectMonth(3)">Apr 26</button>
-  <button class="pill" onclick="selectMonth(4)">May 26</button>
-  <button class="pill active" onclick="selectMonth(5)">Jun 26</button>
-</div>
-
-<div class="container">
-
-  <!-- OVERDUE ALERT -->
-  <div class="alert-banner alert-danger">
-    <div class="alert-header open" onclick="toggleAlert(this)">
-      <span>🔴</span><span>Outstanding Dues</span>
-      <span id="overdueSummary" style="margin-left:6px;font-weight:400;font-size:0.8rem;"></span>
-      <span class="chevron">▼</span>
-    </div>
-    <div class="alert-body open" id="overdueBody">
-      <div id="overdueChips" class="chip-group"></div>
-      <div id="overdueDetailText" style="margin-top:10px;font-size:0.78rem;color:var(--muted);"></div>
-    </div>
+    <div class="summary-bar" id="summaryBar"></div>
+    <div class="month-pills" id="monthPills"></div>
   </div>
 
-  <!-- SOLAR SAVINGS -->
-  <div class="alert-banner alert-solar">
-    <div class="alert-header" onclick="toggleAlert(this)">
-      <span>☀️</span><span>Solar Savings</span>
-      <span id="solarTotal" style="margin-left:6px;font-weight:400;font-size:0.8rem;"></span>
-      <span class="chevron">▼</span>
+  <div class="content">
+    <div class="kpi-grid" id="kpiGrid"></div>
+
+    <div class="banner overdue" id="bannerOverdue">
+      <div class="banner-head" onclick="toggleBanner('bannerOverdue')">
+        <span class="htitle">🔴 Outstanding Dues — <span id="overdueMonthLabel"></span></span>
+        <span class="hamount" id="overdueHeadAmt"></span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="banner-body">
+        <p class="desc">Flats with pending maintenance, corpus, or hall dues. Tap a flat for the exact amount.</p>
+        <div class="chip-row" id="overdueChips"></div>
+      </div>
     </div>
-    <div class="alert-body" id="solarBody">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:12px;">
+
+    <div class="banner solar" id="bannerSolar">
+      <div class="banner-head" onclick="toggleBanner('bannerSolar')">
+        <span class="htitle">☀️ Solar Savings</span>
+        <span class="hamount" id="solarHeadAmt"></span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="banner-body">
+        <p class="desc">Solar investment: ₹9,50,000 (installed Dec 2023) · ₹18,500/month in avoided electricity bills.</p>
+        <div class="progress-track"><div class="progress-fill fill-gold" id="solarFill"></div></div>
+        <div class="progress-label"><span id="solarMonthsLabel"></span><span id="solarPct"></span></div>
+        <div class="chart-box small" style="margin-top:14px;"><canvas id="solarChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Income, Expenses & Balance Trend</h2>
+      <p class="desc">All months tracked so far, Jan–Jul 2026.</p>
+      <div class="chart-box"><canvas id="trendChart"></canvas></div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h2>Expense Breakdown — <span id="breakdownMonthLabel"></span></h2>
+        <p class="desc">Ad-hoc items are one-off costs, not part of the regular monthly run-rate.</p>
+        <div class="chart-box small"><canvas id="breakdownChart"></canvas></div>
+      </div>
+      <div class="card">
+        <h2>Ranked Categories</h2>
+        <div class="rank-list" id="rankList"></div>
+        <div class="stat-line" style="border-top:2px solid var(--line); margin-top:6px; padding-top:10px;">
+          <span class="k" style="font-weight:700;color:var(--ink);">Total</span><span class="v" id="breakdownTotal"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h2>Balance Summary — <span id="balanceMonthLabel"></span></h2>
+        <div class="stat-line"><span class="k">Opening balance</span><span class="v" id="balOpening"></span></div>
+        <div class="stat-line"><span class="k">Total online deposits</span><span class="v" id="balDeposits"></span></div>
+        <div class="stat-line"><span class="k">Total online bills paid</span><span class="v neg" id="balOnlineExp"></span></div>
+        <div class="stat-line"><span class="k">Total cash expenses</span><span class="v neg" id="balCashExp"></span></div>
+        <div class="stat-line"><span class="k">Closing balance</span><span class="v" id="balClosing"></span></div>
+        <div class="stat-line"><span class="k">Cash on hand (carried forward)</span><span class="v" id="balCashOnHand"></span></div>
+        <div class="stat-line"><span class="k">Net change this month</span><span class="v" id="balNet"></span></div>
+      </div>
+      <div class="card">
+        <h2>Flats Paying by Cash — <span id="cashMonthLabel"></span></h2>
+        <p class="desc" id="cashNote"></p>
+        <div class="chip-row" id="cashChips"></div>
+      </div>
+    </div>
+
+    <div class="grid3">
+      <div class="card">
+        <h2>⏩ Advance Payments</h2>
+        <p class="desc">Flats that paid future month(s) in advance. Independent month filter.</p>
+        <div class="subtile-pills" id="advPills"></div>
+        <table id="advTable"><thead><tr><th>Flat</th><th style="text-align:right;">Amount</th><th>Note</th></tr></thead><tbody></tbody></table>
+      </div>
+      <div class="card">
+        <h2>✅ Dues Cleared</h2>
+        <p class="desc">Flats that settled outstanding arrears. Independent month filter.</p>
+        <div class="subtile-pills" id="duesPills"></div>
+        <table id="duesTable"><thead><tr><th>Flat(s)</th><th style="text-align:right;">Amount</th><th>Period cleared</th></tr></thead><tbody></tbody></table>
+      </div>
+      <div class="card">
+        <h2>🎉 Party Hall Payments</h2>
+        <p class="desc">Flats that booked and paid for the party hall. Independent month filter.</p>
+        <div class="subtile-pills" id="partyPills"></div>
+        <table id="partyTable"><thead><tr><th>Flat</th><th style="text-align:right;">Amount</th></tr></thead><tbody></tbody></table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Projected Monthly Income & Expenses</h2>
+      <p class="desc">Averages from Jan–Jul 2026 (7 months tracked so far), used to estimate a typical month going forward. Excludes ad-hoc / one-time items.</p>
+      <div class="grid2">
         <div>
-          <div class="roi-big" id="solarBig"></div>
-          <div style="font-size:0.78rem;color:var(--muted);">Total saved since Dec 2023 (<span id="solarMoCount"></span> months)</div>
+          <h3 style="font-size:14px;margin:0 0 8px;">Projected Income</h3>
+          <div id="projIncomeList"></div>
+          <div class="stat-line" style="border-top:2px solid var(--line); margin-top:6px; padding-top:8px;">
+            <span class="k" style="font-weight:700;color:var(--ink);">Total</span><span class="v" id="projIncomeTotal"></span>
+          </div>
         </div>
-        <div style="display:flex;gap:20px;flex-wrap:wrap;">
-          <div style="text-align:center;">
-            <div style="font-size:1rem;font-weight:800;color:#92400e;">₹9,50,000</div>
-            <div style="font-size:0.7rem;color:var(--muted);">Investment</div>
-          </div>
-          <div style="text-align:center;">
-            <div style="font-size:1rem;font-weight:800;color:var(--solar);" id="solarRemaining"></div>
-            <div style="font-size:0.7rem;color:var(--muted);">Remaining to recover</div>
-          </div>
-          <div style="text-align:center;">
-            <div style="font-size:1rem;font-weight:800;color:var(--success);" id="solarROIDate"></div>
-            <div style="font-size:0.7rem;color:var(--muted);">Est. full ROI by</div>
+        <div>
+          <h3 style="font-size:14px;margin:0 0 8px;">Projected Expenses</h3>
+          <div id="projExpenseList"></div>
+          <div class="stat-line" style="border-top:2px solid var(--line); margin-top:6px; padding-top:8px;">
+            <span class="k" style="font-weight:700;color:var(--ink);">Total</span><span class="v" id="projExpenseTotal"></span>
           </div>
         </div>
       </div>
-      <div class="roi-row" style="margin-bottom:6px;">
-        <span style="font-size:0.78rem;color:var(--muted);">ROI Progress — ₹18,500/month saving</span>
-        <span style="font-size:0.82rem;font-weight:700;color:var(--solar);" id="solarROIpct"></span>
-      </div>
-      <div class="progress-bar" style="margin-bottom:14px;"><div class="progress-fill" id="solarProgress" style="background:var(--solar);"></div></div>
-      <div style="position:relative;height:180px;">
-        <canvas id="solarROIChart"></canvas>
-      </div>
-      <div style="font-size:0.7rem;color:var(--muted);margin-top:6px;text-align:center;" id="solarROINote"></div>
     </div>
-  </div>
 
-  <!-- ADONMO BANNER -->
-  <div class="alert-banner alert-adonmo">
-    <div class="alert-header" onclick="toggleAlert(this)">
-      <span>📡</span><span>Adonmo → CCTV Reserve</span>
-      <span id="adonmoSummary" style="margin-left:6px;font-weight:400;font-size:0.8rem;"></span>
-      <span class="chevron">▼</span>
-    </div>
-    <div class="alert-body" id="adonmoBody">
-      <div style="font-size:0.82rem;color:var(--muted);">₹1,100/month ad revenue ring-fenced for CCTV maintenance reserve.</div>
-      <div style="margin-top:8px;display:flex;gap:20px;flex-wrap:wrap;">
-        <div><div style="font-size:1.2rem;font-weight:800;color:#6d28d9;" id="adonmoTotal"></div><div style="font-size:0.72rem;color:var(--muted);">Total accumulated (Jan–Jun 26)</div></div>
-        <div><div style="font-size:1rem;font-weight:700;">₹26,358</div><div style="font-size:0.72rem;color:var(--muted);">CCTV spent (Jan 26)</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- KPI GRID -->
-  <div class="kpi-grid">
-    <div class="kpi-card" style="--kpi-color:#2563a8;"><div class="kpi-icon">💰</div><div class="kpi-label">Total Income</div><div class="kpi-value" id="kpi-income">—</div><div class="kpi-sub" id="kpi-income-sub"></div></div>
-    <div class="kpi-card" style="--kpi-color:#dc2626;"><div class="kpi-icon">📤</div><div class="kpi-label">Total Expenses</div><div class="kpi-value" id="kpi-expenses">—</div><div class="kpi-sub" id="kpi-exp-sub"></div></div>
-    <div class="kpi-card" style="--kpi-color:#16a34a;"><div class="kpi-icon">🏦</div><div class="kpi-label">Bank Balance</div><div class="kpi-value" id="kpi-balance">—</div><div class="kpi-sub" id="kpi-bal-sub"></div></div>
-    <div class="kpi-card" style="--kpi-color:#f59e0b;"><div class="kpi-icon">☀️</div><div class="kpi-label">Solar Gain</div><div class="kpi-value">₹18,500</div><div class="kpi-sub">This month savings</div></div>
-    <div class="kpi-card" style="--kpi-color:#dc2626;"><div class="kpi-icon">⚠️</div><div class="kpi-label">Outstanding Dues</div><div class="kpi-value" id="kpi-dues">—</div><div class="kpi-sub" id="kpi-dues-sub"></div></div>
-    <div class="kpi-card" style="--kpi-color:#16a34a;"><div class="kpi-icon">💵</div><div class="kpi-label">Cash on Hand</div><div class="kpi-value" id="kpi-cash">—</div><div class="kpi-sub" id="kpi-cash-sub"></div></div>
-  </div>
-
-  <!-- TREND CHART -->
-  <div class="card">
-    <div class="card-title">📈 Income vs Expenses vs Balance — All Months</div>
-    <div style="position:relative;height:260px;"><canvas id="trendChart"></canvas></div>
-  </div>
-
-  <!-- EXPENSE BREAKDOWN — creative -->
-  <div class="card">
-    <div class="card-title">🧾 Monthly Expense Breakdown</div>
-    <div class="breakdown-tabs" id="breakdownTabs"></div>
-    <div class="breakdown-layout">
-      <div class="breakdown-donut-wrap">
-        <canvas id="donutChart"></canvas>
-        <div class="donut-center">
-          <div class="donut-total-val" id="donutTotalVal"></div>
-          <div class="donut-total-lbl">Total</div>
-        </div>
-      </div>
-      <div class="breakdown-list" id="breakdownList"></div>
-    </div>
-  </div>
-
-  <!-- BALANCE SUMMARY -->
-  <div class="card">
-    <div class="card-title">⚖️ Balance Summary</div>
-    <table class="data-table" id="balanceTable"></table>
-  </div>
-
-  <!-- FLATS GRID — row 1: dues + cash -->
-  <div class="grid-2">
     <div class="card">
-      <div class="card-title">🔴 Flats With Outstanding Dues</div>
-      <div id="dueFlatsContent"></div>
+      <h2>Persistent Flat Notes</h2>
+      <div id="flatNotes"></div>
     </div>
-    <div class="card">
-      <div class="card-title">💵 Flats Paying by Cash</div>
-      <div id="cashFlatsContent"></div>
-    </div>
-  </div>
 
-  <!-- FLATS GRID — row 2: advance + dues cleared + party hall (each with own month pills) -->
-  <div class="grid-3">
-    <div class="card">
-      <div class="card-title">⏩ Advance Payments</div>
-      <div class="inner-pills" id="advancePills"></div>
-      <div id="advanceContent"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">✅ Dues Cleared</div>
-      <div class="inner-pills" id="duesClearedPills"></div>
-      <div id="duesClearedContent"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">🎉 Party Hall</div>
-      <div class="inner-pills" id="partyHallPills"></div>
-      <div id="partyHallContent"></div>
-    </div>
-  </div>
-
-  <!-- PROJECTION -->
-  <div class="grid-2">
-    <div class="card">
-      <div class="card-title">🔮 Projected Monthly Income</div>
-      <div id="projIncomeContent"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">📊 Projected Monthly Expenses</div>
-      <div id="projExpContent"></div>
-    </div>
-  </div>
-
-  <div style="text-align:center;padding:16px 0 8px;font-size:0.72rem;color:var(--muted);">
-    Sanvi Meadows OWA · Dashboard updated June 2026 · Association Reg. No: 1369 of 2017
+    <footer>Sanvi Meadows Owners Welfare Association · Dashboard version: Jul 2026 · Data period: Jan–Jul 2026 · Chart.js 4.4.1</footer>
   </div>
 </div>
 
 <script>
-// ═══════════════ DATA ═══════════════
-const LIFT_MONTHS       = 6;
-const LIFT_PER_MONTH    = 8209;
-const LIFT_ANNUAL       = 98500;
-const SOLAR_MONTHS_TOTAL = 31;   // Dec 2023 – Jun 2026
-const ADONMO_MONTHS     = 6;
+const DATA = {"months": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"], "labels": ["Jan 26", "Feb 26", "Mar 26", "Apr 26", "May 26", "Jun 26", "Jul 26"], "totalFlats": 35, "income": {"online": [78000, 75000, 84100, 87000, 90000, 84000, 90000], "corpus": [10000, 5000, 0, 5000, 0, 5000, 0], "ads": [1100, 1100, 1100, 1100, 1100, 1100, 1100], "party": [2000, 0, 0, 0, 0, 3100, 0], "advance": [0, 3000, 0, 0, 33000, 3000, 0], "cash": [15265, 16606, 12651, 10226, 12246, 15231, 11771]}, "duesCleared": [3000, 3000, 9000, 18000, 9000, 3000, 25000], "expenses": {"online": [153285.5, 72699.5, 106296.82, 95747.82, 85547.82, 149060.82, 93247.82], "cash": [13659, 12955, 11425, 6980, 9015, 12460, 6000]}, "balance": {"opening": [1320151.83, 1260966.33, 1275366.83, 1263270.01, 1278622.19, 1323174.37, 1273313.55], "deposits": [94100, 87100, 94200, 111100, 130100, 99200, 113100], "closing": [1260966.33, 1275366.83, 1263270.01, 1278622.19, 1323174.37, 1273313.55, 1293165.73]}, "cashOnHand": [1606, 3651, 1226, 3246, 3231, 2771, 5771], "cashOnHandDate": ["1 Feb 26", "1 Mar 26", "1 Apr 26", "1 May 26", "1 Jun 26", "1 Jul 26", "1 Aug 26"], "flats": [27, 26, 30, 29, 30, 29, 30], "dues": [73000, 77000, 74000, 57000, 60100, 58000, 36000], "cashFlats": [{"flats": ["102", "302", "305", "407"], "note": "Jan 26 maintenance"}, {"flats": ["102", "107", "302", "406", "407"], "note": "Feb 26 maintenance"}, {"flats": ["302", "305", "407"], "note": "Mar 26 maintenance"}, {"flats": ["302", "305", "407"], "note": "Apr 26 maintenance"}, {"flats": ["302", "305"], "note": "May 26 maintenance"}, {"flats": ["102", "107", "302", "306"], "note": "Jun 26 maintenance"}, {"flats": ["302", "407"], "note": "Jul 26 maintenance"}], "overdueFlats": [{"flatDues": {"104": 10000, "103": 6000, "505": 6000, "303": 3000, "306": 3000, "407": 45000}}, {"flatDues": {"104": 10000, "103": 9000, "505": 9000, "306": 3000, "305": 3000, "405": 3000, "407": 40000}}, {"flatDues": {"104": 10000, "103": 12000, "306": 3000, "305": 3000, "405": 6000, "407": 40000}}, {"flatDues": {"104": 10000, "306": 3000, "305": 3000, "107": 3000, "505": 3000, "407": 35000}}, {"flatDues": {"104": 10000, "306": 3000, "102": 3000, "405": 3000, "501": 3000, "307": 3100, "407": 35000}}, {"flatDues": {"104": 10000, "306": 3000, "102": 3000, "405": 6000, "103": 3000, "305": 3000, "407": 30000}}, {"flatDues": {"306": 3000, "403": 3000, "407": 30000}}], "overdueDetail": [{"month": "Jan 26", "amount": 73000}, {"month": "Feb 26", "amount": 77000}, {"month": "Mar 26", "amount": 74000}, {"month": "Apr 26", "amount": 57000}, {"month": "May 26", "amount": 60100}, {"month": "Jun 26", "amount": 58000}, {"month": "Jul 26", "amount": 36000}], "advancePayments": [{"month": "Feb 26", "flat": "107", "amount": 3000, "note": "Mar 26 advance"}, {"month": "May 26", "flat": "507", "amount": 33000, "note": "Advance till Apr 27"}, {"month": "Jun 26", "flat": "505", "amount": 3000, "note": "Jul 26 advance"}], "duesClearedLog": [{"month": "Jan 26", "flats": "405", "amount": 3000, "note": "Dec 25"}, {"month": "Feb 26", "flats": "303", "amount": 3000, "note": "Jan 26"}, {"month": "Mar 26", "flats": "505", "amount": 9000, "note": "Dec 25 + Jan-Feb 26"}, {"month": "Apr 26", "flats": "103, 405", "amount": 18000, "note": "103: Dec 25-Mar 26; 405: Feb-Mar 26"}, {"month": "May 26", "flats": "305, 505, 107", "amount": 9000, "note": "Apr 26 dues (107 via cash)"}, {"month": "Jun 26", "flats": "501", "amount": 3000, "note": "May 26"}, {"month": "Jul 26", "flats": "102, 103, 104, 405, 305", "amount": 25000, "note": "102: May dues; 103: June dues; 104: Oct-Dec 25 + vacating charges; 405: May-June 26; 305: June dues (via cash)"}], "partyHallLog": [{"month": "Jan 26", "flat": "501", "amount": 2000}, {"month": "Jun 26", "flat": "307", "amount": 3100}], "breakdown": [[{"cat": "Staff & Security", "amt": 64500}, {"cat": "Generator / Diesel", "amt": 8000}, {"cat": "Water Tankers", "amt": 0}, {"cat": "Internet / Fiber", "amt": 319.5}, {"cat": "Misc & Cleaning", "amt": 4650}, {"cat": "Electricity (Solar \u2600)", "amt": 0}, {"cat": "CCTV & Camera Maintenance (ad-hoc)", "amt": 27017, "adhoc": true}, {"cat": "Electrical Switch Work (ad-hoc)", "amt": 9998, "adhoc": true}, {"cat": "Gym Maintenance (ad-hoc)", "amt": 22410, "adhoc": true}, {"cat": "Plumbing / Water Pipe (ad-hoc)", "amt": 2200, "adhoc": true}, {"cat": "Party Hall Cleaning (ad-hoc)", "amt": 500, "adhoc": true}, {"cat": "Pest Control (ad-hoc)", "amt": 350, "adhoc": true}, {"cat": "Watchman Salary Advance (ad-hoc)", "amt": 20000, "adhoc": true}, {"cat": "Generator Battery Replacement (ad-hoc)", "amt": 7000, "adhoc": true}], [{"cat": "Staff & Security", "amt": 59000}, {"cat": "Generator / Diesel", "amt": 11600}, {"cat": "Water Tankers", "amt": 3200}, {"cat": "Internet / Fiber", "amt": 319.5}, {"cat": "Misc & Cleaning", "amt": 3270}, {"cat": "Electricity (Solar \u2600)", "amt": 0}, {"cat": "Pigeon Net Work (ad-hoc)", "amt": 3680, "adhoc": true}, {"cat": "Drainage Repair (ad-hoc)", "amt": 4585, "adhoc": true}], [{"cat": "Staff & Security", "amt": 59000}, {"cat": "Generator / Diesel", "amt": 9000}, {"cat": "Water Tankers", "amt": 26100}, {"cat": "Internet / Fiber", "amt": 347.82}, {"cat": "Misc & Cleaning", "amt": 5025}, {"cat": "Electricity (Solar \u2600)", "amt": 0}, {"cat": "Account Keeping Charges (ad-hoc)", "amt": 649, "adhoc": true}, {"cat": "Pigeon Net Work (ad-hoc)", "amt": 13500, "adhoc": true}, {"cat": "Pest Control (ad-hoc)", "amt": 2100, "adhoc": true}, {"cat": "Water Lineman Charges (ad-hoc)", "amt": 2000, "adhoc": true}], [{"cat": "Staff & Security", "amt": 59000}, {"cat": "Generator / Diesel", "amt": 12100}, {"cat": "Water Tankers", "amt": 27300}, {"cat": "Internet / Fiber", "amt": 347.82}, {"cat": "Misc & Cleaning", "amt": 2960}, {"cat": "Electricity (Solar \u2600)", "amt": 0}, {"cat": "Plumbing & M-Seal Work (ad-hoc)", "amt": 1020, "adhoc": true}], [{"cat": "Staff & Security", "amt": 57000}, {"cat": "Generator / Diesel", "amt": 12000}, {"cat": "Water Tankers", "amt": 20200}, {"cat": "Internet / Fiber", "amt": 347.82}, {"cat": "Misc & Cleaning", "amt": 3015}, {"cat": "Electricity (Solar \u2600)", "amt": 0}, {"cat": "Water Lineman Charges (ad-hoc)", "amt": 2000, "adhoc": true}], [{"cat": "Staff & Security", "amt": 64000}, {"cat": "Generator / Diesel", "amt": 15000}, {"cat": "Water Tankers", "amt": 15800}, {"cat": "Internet / Fiber", "amt": 347.82}, {"cat": "Misc & Cleaning", "amt": 3060}, {"cat": "Electricity (Solar \u2600)", "amt": 0}, {"cat": "Generator Servicing (ad-hoc)", "amt": 12925, "adhoc": true}, {"cat": "Lift AMC Renewal (ad-hoc)", "amt": 49638, "adhoc": true}, {"cat": "CCTV App Repair (ad-hoc)", "amt": 750, "adhoc": true}], [{"cat": "Staff & Security", "amt": 70000}, {"cat": "Generator / Diesel", "amt": 20900}, {"cat": "Water Tankers", "amt": 0}, {"cat": "Internet / Fiber", "amt": 347.82}, {"cat": "Misc & Cleaning", "amt": 3000}, {"cat": "Electricity (Solar \u2600)", "amt": 0}, {"cat": "Water Lineman Charges (ad-hoc)", "amt": 2000, "adhoc": true}, {"cat": "Manhole Repair (ad-hoc)", "amt": 3000, "adhoc": true}]], "LIFT_MONTHS": 7, "LIFT_ANNUAL": 98500, "LIFT_MONTHLY": 8209, "SOLAR_MONTHLY": 18500, "SOLAR_INVESTMENT": 950000, "SOLAR_MONTHS_TOTAL": 32, "ADONMO_MONTHLY": 1100, "ADONMO_MONTHS_TRACKED": 7, "CCTV_SPEND_NOTE": "\u20b926,358 was spent on CCTV maintenance in Jan 2026"};
+let activeMonth = DATA.months.length - 1; // July default
+let advMonth = null, duesMonth = null, partyMonth = null; // null = "All"
 
-const DATA = {
-  labels:  ['Jan 26','Feb 26','Mar 26','Apr 26','May 26','Jun 26'],
-  income: {
-    online:  [78000,75000,84100,87000,90000,84000],
-    dues:    [3000, 3000, 9000,18000, 6000, 3000],
-    corpus:  [10000,5000,    0, 5000,    0, 5000],
-    ads:     [1100, 1100, 1100, 1100, 1100, 1100],
-    party:   [2000,    0,    0,    0,    0, 3100],
-    cash:    [15265,16606,12651,10226,12246,15231],
-    solar:   [18500,18500,18500,18500,18500,18500],
-  },
-  expenses: {
-    online: [153285.5,72699.5,106296.82,95747.82,85547.82,149060.82],
-    cash:   [13659,   12955,  11425,    6980,    9015,    12460],
-  },
-  balance: {
-    opening: [1320151.83,1260966.33,1275366.83,1263270.01,1278622.19,1323174.37],
-    closing: [1260966.33,1275366.83,1263270.01,1278622.19,1323174.37,1273313.55],
-    deposits:[94100,87100,94200,111100,130100,99200],
-  },
-  flats: [27,26,30,29,30,29],
-  dues:  [0, 77000,74000,57000,60100,58000],
-  // Cash carry-forward at end of each month (from "Carry Forward Cash" row in each sheet)
-  cashOnHand: [1606, 3651, 1226, 3246, 3231, 2771],
-  cashOnHandDate: ['1 Feb 2026','1 Mar 2026','1 Apr 2026','1 May 2026','1 Jun 2026','1 Jul 2026'],
-  // advancePayments: flats that paid next month(s) in advance
-  advancePayments: [
-    [],                                                        // Jan — none new
-    [{flat:'107',amount:3000,note:'Mar 26 advance'}],          // Feb
-    [],                                                        // Mar — none new
-    [],                                                        // Apr — none new
-    [{flat:'507',amount:33000,note:'Advance till Apr 27'}],    // May
-    [{flat:'505',amount:3000,note:'Jul 26 advance'}],          // Jun
-  ],
-  // duesCleared: flats that settled arrears this month
-  duesCleared: [
-    [{flat:'405',amount:3000,note:'Dec 25 dues'}],                                                                  // Jan
-    [{flat:'303',amount:3000,note:'Jan 26 dues'}],                                                                  // Feb
-    [{flat:'505',amount:9000,note:'Dec 25 + Jan + Feb 26'}],                                                        // Mar
-    [{flat:'103',amount:12000,note:'Dec 25 + Jan–Mar 26'},{flat:'405',amount:6000,note:'Feb + Mar 26'}],            // Apr
-    [{flat:'305',amount:3000,note:'Apr 26 dues'},{flat:'505',amount:3000,note:'Apr 26 dues'},{flat:'107',amount:3000,note:'Apr 26 dues (cash)'}], // May
-    [{flat:'501',amount:3000,note:'May 26 dues'}],                                                                  // Jun
-  ],
-  // partyHall: flats that paid party hall fee
-  partyHall: [
-    [{flat:'501',amount:2000,note:'Party hall booking'}],  // Jan
-    [],                                                    // Feb
-    [],                                                    // Mar
-    [],                                                    // Apr
-    [],                                                    // May
-    [{flat:'307',amount:3100,note:'Party hall booking'}],  // Jun
-  ],
-  cashFlats: [
-    { flats:['102','302','305','407'], note:'Jan 26 cash payers' },
-    { flats:['102','107','302','406','407'], note:'Feb 26 cash payers' },
-    { flats:['302','305','407'], note:'Mar 26 cash payers' },
-    { flats:['302','305','407'], note:'Apr 26 cash payers' },
-    { flats:['107','302','305'], note:'May 26 (107 = due clearance Apr)' },
-    { flats:['102','107','302','306'], note:'Jun 26 cash payers' },
-  ],
-  overdueFlats: [
-    { flatDues:{'104':10000} },
-    { flatDues:{'104':10000,'103':9000,'505':9000,'306':3000,'305':3000,'405':3000} },
-    { flatDues:{'104':10000,'103':12000,'306':3000,'305':3000,'405':6000} },
-    { flatDues:{'104':10000,'306':3000,'305':3000,'107':3000,'505':3000} },
-    { flatDues:{'104':10000,'306':3000,'102':3000,'405':3000,'501':3000} },
-    { flatDues:{'104':10000,'306':3000,'102':3000,'405':6000,'103':3000,'305':3000} },
-  ],
-  // breakdown: [label, amount, isAdHoc]
-  breakdown: [
-    [['Staff & Security',64500,false],['Generator / Diesel',8000,false],['Water Tankers',0,false],['Internet / Fiber',319.5,false],['Misc & Cleaning',8659,false],['CCTV Maintenance',26358,true],['Generator Battery',7000,true],['4P Switch',9098,true],['Watchman Advance',20000,true],['Gym Maintenance',21810,true],['Water Pipe',1200,true]],
-    [['Staff & Security',59000,false],['Generator / Diesel',11600,false],['Water Tankers',3200,false],['Internet / Fiber',319.5,false],['Misc & Cleaning',3270,false],['Pigeon Net',3680,true],['Drainage Repair',4585,true]],
-    [['Staff & Security',59000,false],['Generator / Diesel',9000,false],['Water Tankers',26100,false],['Internet / Fiber',347.82,false],['Misc & Cleaning',7025,false],['Account Charges',649,false],['Pigeon Net Terrace',13500,true],['Pest Control',2100,true]],
-    [['Staff & Security',59000,false],['Generator / Diesel',12100,false],['Water Tankers',27300,false],['Internet / Fiber',347.82,false],['Misc & Cleaning',2960,false],['Plumbing',1020,true]],
-    [['Staff & Security',57000,false],['Generator / Diesel',12000,false],['Water Tankers',20200,false],['Internet / Fiber',347.82,false],['Misc & Cleaning',3015,false],['Water Lineman',2000,false]],
-    [['Staff & Security',64000,false],['Generator / Diesel',15000,false],['Water Tankers',15800,false],['Internet / Fiber',347.82,false],['Misc & Cleaning',3060,false],['Generator Servicing',12925,true],['Lift AMC 6mo',49638,true],['CCTV App Repair',750,true]],
-  ],
-};
+const INR = n => '₹' + Math.round(n).toLocaleString('en-IN');
+const INR2 = n => '₹' + n.toLocaleString('en-IN', {minimumFractionDigits: n % 1 !== 0 ? 2 : 0, maximumFractionDigits:2});
 
-// ═══════════════ HELPERS ═══════════════
-const fmt  = n => '₹' + Math.round(n).toLocaleString('en-IN');
-const fmtK = n => n>=100000 ? '₹'+(n/100000).toFixed(2)+'L' : n>=1000 ? '₹'+(n/1000).toFixed(1)+'K' : '₹'+Math.round(n);
+function toggleBanner(id){ document.getElementById(id).classList.toggle('collapsed'); }
+function toggleChip(el){ document.querySelectorAll('.chip.open').forEach(c => { if(c!==el) c.classList.remove('open'); }); el.classList.toggle('open'); }
 
-const PALETTE_CORE  = ['#2563a8','#dc2626','#0891b2','#16a34a','#d97706','#7c3aed'];
-const PALETTE_ADHOC = ['#94a3b8','#a8a29e','#b0b0b0','#c4c4c4','#d4d4d4','#e0e0e0'];
-
-let solarChartBuilt = false;
-
-function toggleAlert(header) {
-  header.classList.toggle('open');
-  const body = header.nextElementSibling;
-  body.classList.toggle('open');
-  // Build solar ROI chart lazily on first open (can't render in hidden element)
-  if (body.id === 'solarBody' && body.classList.contains('open') && !solarChartBuilt) {
-    solarChartBuilt = true;
-    buildSolarROIChart();
-  }
-}
-
-let donutInst = null;
-let trendInst = null;
-let solarROIChartInst = null;
-
-// ═══════════════ INIT ═══════════════
-function init() {
-  buildSolarBanner();
-  buildAdonmoBanner();
-  buildTrendChart();
-  buildProjection();
-  initSubTilePills();   // independent month pills for advance/dues/party tiles
-  selectMonth(5);
-}
-
-function buildSolarBanner() {
-  const invest  = 950000;
-  const monthly = 18500;
-  const total   = SOLAR_MONTHS_TOTAL * monthly;  // 31 × 18500 = 573500
-  const pct     = (total / invest * 100);
-  const remaining = invest - total;
-  const moLeft  = Math.ceil(remaining / monthly);
-
-  // ROI date: Dec 2023 + 52 months = Apr 2028
-  const startDate = new Date(2023, 11, 1);
-  const roiDate = new Date(startDate);
-  roiDate.setMonth(roiDate.getMonth() + 52);
-  const roiLabel = roiDate.toLocaleString('en-IN', { month: 'short', year: 'numeric' });
-
-  document.getElementById('solarTotal').textContent     = 'Saved \u20b9' + (total/100000).toFixed(2) + 'L of \u20b99.50L \u00b7 ' + pct.toFixed(1) + '% recovered';
-  document.getElementById('solarBig').textContent       = '\u20b9' + total.toLocaleString('en-IN');
-  document.getElementById('solarMoCount').textContent   = SOLAR_MONTHS_TOTAL;
-  document.getElementById('solarRemaining').textContent = '\u20b9' + remaining.toLocaleString('en-IN');
-  document.getElementById('solarROIDate').textContent   = roiLabel;
-  document.getElementById('solarROIpct').textContent    = pct.toFixed(1) + '%';
-  document.getElementById('solarProgress').style.width  = pct + '%';
-  document.getElementById('solarROINote').textContent   =
-    'At \u20b918,500/month \u2014 full recovery of \u20b99,50,000 by ' + roiLabel + ' (~' + moLeft + ' more months)';
-}
-
-function buildSolarROIChart() {
-  const invest  = 950000;
-  const monthly = 18500;
-  const nowIdx  = SOLAR_MONTHS_TOTAL - 1; // index of Jun 2026 (0-based)
-
-  // Build data: Dec 2023 (month 1) → Apr 2028 (month 52)
-  const chartLabels = [], chartData = [], chartTarget = [];
-  const s = new Date(2023, 11, 1);
-  for (let i = 1; i <= 53; i++) {
-    const d = new Date(s.getFullYear(), s.getMonth() + i - 1, 1);
-    const mo = d.toLocaleString('default', { month: 'short' });
-    const yr = String(d.getFullYear()).slice(2);
-    chartLabels.push(mo + " '" + yr);
-    chartData.push(i * monthly);
-    chartTarget.push(invest);
-  }
-
-  if (solarROIChartInst) { solarROIChartInst.destroy(); solarROIChartInst = null; }
-  const ctx = document.getElementById('solarROIChart').getContext('2d');
-  solarROIChartInst = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: chartLabels,
-      datasets: [
-        {
-          label: 'Cumulative Savings',
-          data: chartData,
-          borderColor: '#f59e0b',
-          backgroundColor: 'rgba(245,158,11,0.08)',
-          fill: true, tension: 0.2, pointRadius: 0, pointHoverRadius: 5,
-          borderWidth: 2.5,
-          segment: {
-            borderColor: seg => seg.p0DataIndex >= nowIdx ? 'rgba(245,158,11,0.4)' : '#f59e0b',
-            borderDash:  seg => seg.p0DataIndex >= nowIdx ? [5,4] : [],
-          }
-        },
-        {
-          label: 'Investment (\u20b99,50,000)',
-          data: chartTarget,
-          borderColor: '#dc2626',
-          borderDash: [6,4],
-          borderWidth: 1.5,
-          pointRadius: 0,
-          fill: false,
-        },
-        {
-          label: 'Today (Jun 26)',
-          data: chartLabels.map((_, i) => i === nowIdx ? chartData[nowIdx] : null),
-          borderColor: '#16a34a',
-          backgroundColor: '#16a34a',
-          pointRadius: chartLabels.map((_, i) => i === nowIdx ? 7 : 0),
-          pointStyle: 'circle',
-          showLine: false,
-          fill: false,
-        }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: {
-        legend: { position: 'top', labels: { font: { size: 10 }, boxWidth: 14, padding: 10 } },
-        tooltip: { callbacks: { label: c => ' ' + c.dataset.label + ': \u20b9' + Math.round(c.parsed.y).toLocaleString('en-IN') } }
-      },
-      scales: {
-        x: { grid: { display: false }, ticks: { maxTicksLimit: 10, font: { size: 10 } } },
-        y: { ticks: { callback: v => '\u20b9' + (v/100000).toFixed(1) + 'L', font: { size: 10 } }, grid: { color: 'rgba(0,0,0,0.05)' } }
-      }
-    }
+function buildMonthPills(){
+  const wrap = document.getElementById('monthPills');
+  wrap.innerHTML = '';
+  const allBtn = document.createElement('button');
+  allBtn.className = 'pill' + (activeMonth === 'all' ? ' active' : '');
+  allBtn.textContent = 'All';
+  allBtn.onclick = () => { activeMonth = 'all'; render(); };
+  wrap.appendChild(allBtn);
+  DATA.labels.forEach((lab, i) => {
+    const b = document.createElement('button');
+    b.className = 'pill' + (i === activeMonth ? ' active' : '');
+    b.textContent = lab;
+    b.onclick = () => { activeMonth = i; render(); };
+    wrap.appendChild(b);
   });
 }
 
-function buildAdonmoBanner() {
-  const total = ADONMO_MONTHS * 1100;
-  document.getElementById('adonmoSummary').textContent = `${fmt(total)} accumulated`;
-  document.getElementById('adonmoTotal').textContent   = fmt(total);
+function buildSummaryBar(){
+  const i = activeMonth === 'all' ? DATA.months.length - 1 : activeMonth;
+  const bar = document.getElementById('summaryBar');
+  bar.innerHTML = `
+    <div class="summary-item">Total flats<b>${DATA.totalFlats}</b></div>
+    <div class="summary-item">Flats paid this month<b>${DATA.flats[i]}</b></div>
+    <div class="summary-item">Bank balance<b>${INR(DATA.balance.closing[i])}</b></div>
+    <div class="summary-item">Outstanding dues<b>${INR(DATA.dues[i])}</b></div>
+    <div class="summary-item">Solar saving<b>₹18,500/mo</b></div>
+  `;
 }
 
-// ═══════════════ MONTH SELECT ═══════════════
-function selectMonth(idx) {
-  document.querySelectorAll('.month-filter .pill').forEach((p,i) => p.classList.toggle('active', i-1===idx));
-  document.querySelectorAll('.month-filter .pill')[0].classList.toggle('active', idx===-1);
-  idx===-1 ? renderAll() : renderMonth(idx);
+function buildKPIs(){
+  const i = activeMonth === 'all' ? DATA.months.length - 1 : activeMonth;
+  const totalIncome = DATA.income.online[i] + DATA.duesCleared[i] + DATA.income.corpus[i] + DATA.income.ads[i] + DATA.income.party[i];
+  const totalExpense = DATA.expenses.online[i]+DATA.expenses.cash[i];
+  const liftPct = (DATA.LIFT_MONTHS * DATA.LIFT_MONTHLY / DATA.LIFT_ANNUAL * 100);
+  const kpis = [
+    {label:'Total Income', value: INR(totalIncome), sub: DATA.labels[i], cls:''},
+    {label:'Total Expenses', value: INR(totalExpense), sub: DATA.labels[i], cls:'brick'},
+    {label:'Bank Balance', value: INR(DATA.balance.closing[i]), sub: 'as per records', cls:''},
+    {label:'Solar Gain', value: INR(DATA.SOLAR_MONTHLY), sub: 'fixed / month', cls:'gold'},
+    {label:'Lift AMC Saved', value: liftPct.toFixed(1)+'%', sub: INR(DATA.LIFT_MONTHS*DATA.LIFT_MONTHLY) + ' of ' + INR(DATA.LIFT_ANNUAL), cls:'teal'},
+    {label:'Outstanding Dues', value: INR(DATA.dues[i]), sub: Object.keys(DATA.overdueFlats[i].flatDues).length + ' flats', cls:'brick'},
+  ];
+  const grid = document.getElementById('kpiGrid');
+  grid.innerHTML = '';
+  kpis.forEach(k => {
+    const d = document.createElement('div');
+    d.className = 'kpi ' + k.cls;
+    d.innerHTML = `<div class="label">${k.label}</div><div class="value">${k.value}</div><div class="sub">${k.sub}</div>`;
+    grid.appendChild(d);
+  });
 }
 
-function renderMonth(idx) {
-  document.getElementById('currentMonthBadge').textContent = DATA.labels[idx];
-  const totInc = DATA.income.online[idx]+DATA.income.dues[idx]+DATA.income.corpus[idx]+DATA.income.ads[idx]+DATA.income.party[idx];
-  const totExp = DATA.expenses.online[idx]+DATA.expenses.cash[idx];
-  document.getElementById('kpi-income').textContent    = fmt(totInc);
-  document.getElementById('kpi-income-sub').textContent= `${DATA.flats[idx]} flats online`;
-  document.getElementById('kpi-expenses').textContent  = fmt(totExp);
-  document.getElementById('kpi-exp-sub').textContent   = `Online: ${fmtK(DATA.expenses.online[idx])}`;
-  document.getElementById('kpi-balance').textContent   = fmt(DATA.balance.closing[idx]);
-  document.getElementById('kpi-bal-sub').textContent   = `Opening: ${fmtK(DATA.balance.opening[idx])}`;
-  document.getElementById('kpi-dues').textContent      = fmt(DATA.dues[idx]);
-  document.getElementById('kpi-dues-sub').textContent  = `${Object.keys(DATA.overdueFlats[idx].flatDues).length} flats`;
-  document.getElementById('kpi-cash').textContent      = fmt(DATA.cashOnHand[idx]);
-  document.getElementById('kpi-cash-sub').textContent  = `As of ${DATA.cashOnHandDate[idx]}`;
-  document.getElementById('hdr-flats').textContent     = DATA.flats[idx];
-  document.getElementById('hdr-balance').textContent   = fmtK(DATA.balance.closing[idx]);
-  document.getElementById('hdr-dues').textContent      = fmtK(DATA.dues[idx]);
-  buildOverdue(idx);
-  buildBreakdownTabs(idx);
-  buildBalanceTable(idx);
-  buildFlats(idx);
-}
-
-function renderAll() {
-  document.getElementById('currentMonthBadge').textContent = 'Jan–Jun 2026';
-  let ti=0, te=0;
-  for(let i=0;i<6;i++){ ti+=DATA.income.online[i]+DATA.income.dues[i]+DATA.income.corpus[i]+DATA.income.ads[i]+DATA.income.party[i]; te+=DATA.expenses.online[i]+DATA.expenses.cash[i]; }
-  document.getElementById('kpi-income').textContent    = fmt(ti);
-  document.getElementById('kpi-income-sub').textContent= 'All 6 months';
-  document.getElementById('kpi-expenses').textContent  = fmt(te);
-  document.getElementById('kpi-exp-sub').textContent   = 'All 6 months';
-  document.getElementById('kpi-balance').textContent   = fmt(DATA.balance.closing[5]);
-  document.getElementById('kpi-bal-sub').textContent   = 'Jun 26 closing';
-  document.getElementById('kpi-dues').textContent      = fmt(DATA.dues[5]);
-  document.getElementById('kpi-dues-sub').textContent  = 'Current outstanding';
-  document.getElementById('kpi-cash').textContent      = fmt(DATA.cashOnHand[5]);
-  document.getElementById('kpi-cash-sub').textContent  = `As of ${DATA.cashOnHandDate[5]}`;
-  document.getElementById('hdr-flats').textContent     = '27–30';
-  document.getElementById('hdr-balance').textContent   = fmtK(DATA.balance.closing[5]);
-  document.getElementById('hdr-dues').textContent      = fmtK(DATA.dues[5]);
-  buildOverdue(5);
-  buildBreakdownTabs(5);
-  buildBalanceTable(-1);
-  buildFlats(5);
-}
-
-// ═══════════════ OVERDUE ═══════════════
-function buildOverdue(idx) {
-  document.getElementById('overdueSummary').textContent = `— ${fmt(DATA.dues[idx])} total · ${DATA.labels[idx]}`;
+function buildOverdueBanner(){
+  const i = activeMonth === 'all' ? DATA.months.length - 1 : activeMonth;
+  document.getElementById('overdueMonthLabel').textContent = DATA.labels[i];
+  document.getElementById('overdueHeadAmt').textContent = INR(DATA.dues[i]);
   const chips = document.getElementById('overdueChips');
   chips.innerHTML = '';
-  Object.entries(DATA.overdueFlats[idx].flatDues).forEach(([flat,amt]) => {
-    chips.innerHTML += `<span class="chip chip-due">
-      <span class="chip-flat-num">${flat}</span>
-      <span class="chip-flat-sub">${fmtK(amt)}</span>
-      <span class="tooltip">${fmt(amt)} overdue</span>
-    </span>`;
+  const fd = DATA.overdueFlats[i].flatDues;
+  Object.keys(fd).forEach(flat => {
+    const c = document.createElement('div');
+    c.className = 'chip';
+    c.innerHTML = `Flat ${flat}<span class="pop">Due: ${INR(fd[flat])}</span>`;
+    c.onclick = () => toggleChip(c);
+    chips.appendChild(c);
   });
-  document.getElementById('overdueDetailText').textContent =
-    'Flat 407: corpus fund due (₹30,000 remaining). Flat 104: arrears since Oct 2025 incl. vacating charges.';
 }
 
-// ═══════════════ BREAKDOWN (DONUT) ═══════════════
-function buildBreakdownTabs(activeIdx) {
-  const tabs = document.getElementById('breakdownTabs');
-  tabs.innerHTML = '';
-  DATA.labels.forEach((lbl,i) => {
-    const btn = document.createElement('button');
-    btn.className = 'btab'+(i===activeIdx?' active':'');
-    btn.textContent = lbl;
-    btn.onclick = () => { document.querySelectorAll('.btab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderBreakdown(i); };
-    tabs.appendChild(btn);
-  });
-  renderBreakdown(activeIdx);
+function buildSolarBanner(){
+  const total = DATA.SOLAR_MONTHLY * DATA.SOLAR_MONTHS_TOTAL;
+  const pct = total / DATA.SOLAR_INVESTMENT * 100;
+  document.getElementById('solarHeadAmt').textContent = INR(total);
+  document.getElementById('solarMonthsLabel').textContent = DATA.SOLAR_MONTHS_TOTAL + ' months of savings';
+  document.getElementById('solarPct').textContent = pct.toFixed(1) + '% of investment recovered';
+  document.getElementById('solarFill').style.width = Math.min(100,pct) + '%';
 }
 
-function renderBreakdown(idx) {
-  // Sort by amount descending
-  const items    = [...DATA.breakdown[idx]].sort((a,b) => b[1]-a[1]);
-  const total    = items.reduce((s,[,v])=>s+v,0);
-  const maxAmt   = items[0][1]; // already sorted, first is max
-
-  document.getElementById('donutTotalVal').textContent = fmtK(total);
-
-  // assign colours
-  let ci=0, ai=0;
-  const colors = items.map(([,, isAd]) => isAd ? PALETTE_ADHOC[ai++ % PALETTE_ADHOC.length] : PALETTE_CORE[ci++ % PALETTE_CORE.length]);
-
-  // donut chart
-  if (donutInst) { donutInst.destroy(); donutInst = null; }
-  const ctx = document.getElementById('donutChart').getContext('2d');
-  donutInst = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: items.map(d=>d[0]),
-      datasets:[{ data: items.map(d=>d[1]), backgroundColor: colors, borderWidth:2, borderColor:'#fff', hoverOffset:8 }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: true, cutout:'62%',
-      plugins:{
-        legend:{ display:false },
-        tooltip:{ callbacks:{ label: c => ' ' + c.label + ': ' + fmt(c.parsed) } }
-      }
+function buildSolarChart(){
+  // Cumulative savings curve Dec 2023 -> full ROI (~52 months), dashed forecast beyond current month
+  const monthlyNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const totalMonthsToROI = Math.ceil(DATA.SOLAR_INVESTMENT / DATA.SOLAR_MONTHLY);
+  const labels = []; const actual = []; const forecast = [];
+  // month 1 = Dec 2023
+  let y = 2023, m = 11; // 0-indexed Dec
+  for(let n=1; n<=totalMonthsToROI; n++){
+    labels.push(monthlyNames[m] + " '" + String(y).slice(2));
+    const cum = n * DATA.SOLAR_MONTHLY;
+    if(n <= DATA.SOLAR_MONTHS_TOTAL){ actual.push(cum); forecast.push(n === DATA.SOLAR_MONTHS_TOTAL ? cum : null); }
+    else { actual.push(null); forecast.push(cum); }
+    m++; if(m>11){ m=0; y++; }
+  }
+  const ctx = document.getElementById('solarChart');
+  if(window.__solarChartInst) window.__solarChartInst.destroy();
+  window.__solarChartInst = new Chart(ctx, {
+    type:'line',
+    data:{ labels, datasets:[
+      { label:'Saved so far', data: actual, borderColor:'#2E7D4F', backgroundColor:'#DFF0E599', fill:true, pointRadius:0, tension:0.1 },
+      { label:'Projected (to full ROI)', data: forecast, borderColor:'#C1861F', borderDash:[6,4], fill:false, pointRadius:0, tension:0.1 },
+      { label:'Investment (₹9,50,000)', data: labels.map(()=>DATA.SOLAR_INVESTMENT), borderColor:'#AE4A2C55', borderDash:[2,3], pointRadius:0 }
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      scales:{ y:{ ticks:{ callback: v => '₹'+(v/100000).toFixed(1)+'L' } }, x:{ ticks:{ maxTicksLimit:10 } } },
+      plugins:{ legend:{position:'bottom', labels:{boxWidth:12,font:{size:10.5}}}, tooltip:{ callbacks:{ label: c => `${c.dataset.label}: ${INR(c.raw)}` } } }
     }
   });
-
-  // list
-  let html = '';
-  items.forEach(([label,amt,isAd],i) => {
-    if(amt===0) return;
-    const pct = total>0 ? ((amt/total)*100).toFixed(1) : '0.0';
-    const barW = maxAmt>0 ? Math.round((amt/maxAmt)*100) : 0;
-    html += `<div class="bl-item${isAd?' adhoc':''}">
-      <div class="bl-dot" style="background:${colors[i]};"></div>
-      <div class="bl-label">${label}${isAd?'<span class="adhoc-tag">ad-hoc</span>':''}</div>
-      <div class="bl-pct">${pct}%</div>
-      <div class="bl-bar-wrap"><div class="bl-bar-track"><div class="bl-bar-fill" style="width:${barW}%;background:${colors[i]};"></div></div></div>
-      <div class="bl-val">${fmt(amt)}</div>
-    </div>`;
-  });
-  document.getElementById('breakdownList').innerHTML = html;
 }
 
-// ═══════════════ BALANCE TABLE ═══════════════
-function buildBalanceTable(idx) {
-  const el = document.getElementById('balanceTable');
-  if(idx===-1){
-    let rows = DATA.labels.map((lbl,i)=>`<tr><td><strong>${lbl}</strong></td><td>${fmt(DATA.balance.opening[i])}</td><td>${fmt(DATA.balance.deposits[i])}</td><td style="color:var(--danger);">${fmt(DATA.expenses.online[i]+DATA.expenses.cash[i])}</td><td><strong style="color:var(--success);">${fmt(DATA.balance.closing[i])}</strong></td></tr>`).join('');
-    el.innerHTML=`<thead><tr><th>Month</th><th>Opening</th><th>Deposits</th><th>Expenses</th><th>Closing</th></tr></thead><tbody>${rows}</tbody>`;
-  } else {
-    el.innerHTML=`<thead><tr><th>Item</th><th>Amount</th></tr></thead><tbody>
-      <tr><td>Opening Balance</td><td>${fmt(DATA.balance.opening[idx])}</td></tr>
-      <tr><td>+ Online Deposits</td><td>${fmt(DATA.balance.deposits[idx])}</td></tr>
-      <tr><td>− Online Expenses</td><td style="color:var(--danger);">${fmt(DATA.expenses.online[idx])}</td></tr>
-      <tr><td>− Cash Expenses</td><td style="color:var(--danger);">${fmt(DATA.expenses.cash[idx])}</td></tr>
-      <tr style="background:#f8fafc;font-weight:700;"><td>Closing Balance</td><td style="color:var(--success);">${fmt(DATA.balance.closing[idx])}</td></tr>
-    </tbody>`;
-  }
-}
+let trendChartInst, breakdownChartInst;
 
-// ═══════════════ FLAT CHIP HELPERS ═══════════════
-function makeChip(cls, flatNum, subLine, tooltipText) {
-  return `<span class="chip ${cls}">
-    <span class="chip-flat-num">${flatNum}</span>
-    <span class="chip-flat-sub">${subLine}</span>
-    <span class="tooltip">${tooltipText}</span>
-  </span>`;
-}
-
-function emptyTile(msg) {
-  return `<div style="color:var(--muted);font-size:0.78rem;padding:8px 0;">${msg}</div>`;
-}
-
-// ═══════════════ FLATS (CHIPS) ═══════════════
-function buildFlats(idx) {
-  // ── Due flats ──
-  const dueEl = document.getElementById('dueFlatsContent');
-  const flatDues = DATA.overdueFlats[idx].flatDues;
-  let dueHtml = '<div class="chip-group">';
-  Object.entries(flatDues).forEach(([flat,amt]) => {
-    const isCorpus = flat==='407';
-    dueHtml += makeChip('chip-due', flat, fmtK(amt), fmt(amt) + (isCorpus?' corpus':' arrears'));
-  });
-  dueHtml += `</div><div style="margin-top:10px;font-size:0.75rem;color:var(--muted);">Hover chip to see exact amount · ${Object.keys(flatDues).length} flats · ${fmt(DATA.dues[idx])} total</div>`;
-  dueEl.innerHTML = dueHtml;
-
-  // ── Cash flats ──
-  const cashEl = document.getElementById('cashFlatsContent');
-  const entry = DATA.cashFlats[idx];
-  const cashTotal = entry.flats.length * 3000;
-  let cashHtml = '<div class="chip-group">';
-  entry.flats.forEach(f => {
-    cashHtml += makeChip('chip-cash', f, '₹3,000', '₹3,000 paid by cash');
-  });
-  cashHtml += `</div>`;
-  cashHtml += `<div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;">
-    <span style="font-size:0.75rem;color:var(--muted);">${entry.flats.length} flat${entry.flats.length>1?'s':''} × ₹3,000</span>
-    <span style="font-size:0.9rem;font-weight:800;color:var(--success);">${fmt(cashTotal)}</span>
-  </div>`;
-  cashEl.innerHTML = cashHtml;
-
-  // ── Advance payments ──
-  renderSubTile('advanceContent', DATA.advancePayments[idx], 'chip-advance', 'advance', 'No advance payments this month', 'total advance');
-
-  // ── Dues cleared ──
-  renderSubTile('duesClearedContent', DATA.duesCleared[idx], 'chip-cleared', 'cleared', 'No dues cleared this month', 'recovered');
-
-  // ── Party hall ──
-  renderSubTile('partyHallContent', DATA.partyHall[idx], 'chip-party', 'party', 'No party hall payments this month', 'collected');
-}
-
-// ═══════════════ INDEPENDENT SUB-TILE PILLS ═══════════════
-// Each of the 3 lower tiles has its own month-pill row independent of the main filter.
-// We initialize them once (in init), then they self-update.
-
-const subTileState = { advance: 5, duesCleared: 5, party: 5 }; // default Jun (idx 5)
-
-function initSubTilePills() {
-  buildInnerPills('advancePills',     'advance',     idx => renderSubTileByKey('advance'));
-  buildInnerPills('duesClearedPills', 'duesCleared', idx => renderSubTileByKey('duesCleared'));
-  buildInnerPills('partyHallPills',   'party',       idx => renderSubTileByKey('party'));
-  renderSubTileByKey('advance');
-  renderSubTileByKey('duesCleared');
-  renderSubTileByKey('party');
-}
-
-function buildInnerPills(containerId, key, onSelect) {
-  const el = document.getElementById(containerId);
-  el.innerHTML = '';
-  DATA.labels.forEach((lbl, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'ipill' + (i === subTileState[key] ? ' active' : '');
-    btn.textContent = lbl.replace(' 26','');
-    btn.dataset.idx = i;
-    btn.onclick = () => {
-      subTileState[key] = i;
-      el.querySelectorAll('.ipill').forEach(p => p.classList.toggle('active', p.dataset.idx == i));
-      onSelect(i);
-    };
-    el.appendChild(btn);
+function buildTrendChart(){
+  const ctx = document.getElementById('trendChart');
+  const totalIncome = DATA.months.map((_,i)=> DATA.income.online[i]+DATA.duesCleared[i]+DATA.income.corpus[i]+DATA.income.ads[i]+DATA.income.party[i]);
+  const totalExpense = DATA.months.map((_,i)=> DATA.expenses.online[i]+DATA.expenses.cash[i]);
+  if(trendChartInst) trendChartInst.destroy();
+  trendChartInst = new Chart(ctx, {
+    data:{ labels: DATA.labels, datasets:[
+      {type:'bar', label:'Income', data: totalIncome, backgroundColor:'#2E7DA699', borderRadius:5, yAxisID:'y'},
+      {type:'bar', label:'Expenses', data: totalExpense, backgroundColor:'#AE4A2C99', borderRadius:5, yAxisID:'y'},
+      {type:'line', label:'Closing Balance', data: DATA.balance.closing, borderColor:'#2E7D4F', backgroundColor:'#2E7D4F', tension:.3, yAxisID:'y1', pointRadius:4}
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false, interaction:{mode:'index', intersect:false},
+      scales:{ y:{ position:'left', ticks:{ callback: v => '₹'+(v/1000).toFixed(0)+'k' }, grid:{color:'#EDE6D6'} },
+                y1:{ position:'right', ticks:{ callback: v => '₹'+(v/100000).toFixed(1)+'L' }, grid:{display:false} } },
+      plugins:{ legend:{position:'bottom'}, tooltip:{ callbacks:{ label: c => `${c.dataset.label}: ${INR(c.raw)}` } } }
+    }
   });
 }
 
-function renderSubTileByKey(key) {
-  const idx = subTileState[key];
-  if (key === 'advance') {
-    renderSubTile('advanceContent', DATA.advancePayments[idx], 'chip-advance', key, 'No advance payments this month', 'total advance');
-  } else if (key === 'duesCleared') {
-    renderSubTile('duesClearedContent', DATA.duesCleared[idx], 'chip-cleared', key, 'No dues cleared this month', 'recovered');
-  } else {
-    renderSubTile('partyHallContent', DATA.partyHall[idx], 'chip-party', key, 'No party hall payments this month', 'collected');
-  }
+function buildBreakdownChart(){
+  const i = activeMonth === 'all' ? DATA.months.length - 1 : activeMonth;
+  const items = DATA.breakdown[i].filter(x => x.amt > 0);
+  const total = items.reduce((a,x)=>a+x.amt,0);
+  const ctx = document.getElementById('breakdownChart');
+  const colors = ['#2E7DA6','#5AA3C7','#C1861F','#AE4A2C','#8FC3DB','#D9C48A','#B98060','#7A9EA0','#C77B4E','#4E8FB5','#E0A83F','#946D4D','#7A5C3E','#3B6E8C'];
+  if(breakdownChartInst) breakdownChartInst.destroy();
+  breakdownChartInst = new Chart(ctx, {
+    type:'doughnut',
+    data:{ labels: items.map(x=>x.cat), datasets:[{ data: items.map(x=>x.amt), backgroundColor: items.map((_,idx)=>colors[idx%colors.length]) }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label: c => `${c.label}: ${INR(c.raw)}` } } } }
+  });
+  document.getElementById('breakdownMonthLabel').textContent = DATA.labels[i];
+  document.getElementById('breakdownTotal').textContent = INR(total);
+
+  const ranked = [...items].sort((a,b)=>b.amt-a.amt);
+  const rankList = document.getElementById('rankList');
+  rankList.innerHTML = '';
+  ranked.forEach(x => {
+    const pct = (x.amt/total*100);
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML = `<span class="name">${x.cat.replace(' (ad-hoc)','')}${x.adhoc?'<span class="adhoc-tag">ad-hoc</span>':''}</span>
+      <span class="bar-track"><span class="bar-fill" style="width:${pct}%"></span></span>
+      <span class="pct">${pct.toFixed(1)}%</span><span class="val">${INR(x.amt)}</span>`;
+    rankList.appendChild(row);
+  });
 }
 
-function renderSubTile(elId, items, chipCls, key, emptyMsg, totalLabel) {
-  const el = document.getElementById(elId);
-  if (!items || items.length === 0) {
-    el.innerHTML = emptyTile(emptyMsg);
+function buildBalanceCard(){
+  const i = activeMonth === 'all' ? DATA.months.length - 1 : activeMonth;
+  document.getElementById('balanceMonthLabel').textContent = DATA.labels[i];
+  document.getElementById('balOpening').textContent = INR2(DATA.balance.opening[i]);
+  document.getElementById('balDeposits').textContent = INR(DATA.balance.deposits[i]);
+  document.getElementById('balOnlineExp').textContent = '−' + INR2(DATA.expenses.online[i]);
+  document.getElementById('balCashExp').textContent = '−' + INR(DATA.expenses.cash[i]);
+  document.getElementById('balClosing').textContent = INR2(DATA.balance.closing[i]);
+  document.getElementById('balCashOnHand').textContent = INR(DATA.cashOnHand[i]) + ' (as of ' + DATA.cashOnHandDate[i] + ')';
+  const net = DATA.balance.closing[i] - DATA.balance.opening[i];
+  const netEl = document.getElementById('balNet');
+  netEl.textContent = (net >= 0 ? '+' : '−') + INR(Math.abs(net));
+  netEl.className = 'v ' + (net >= 0 ? 'pos' : 'neg');
+}
+
+function buildCashCard(){
+  const i = activeMonth === 'all' ? DATA.months.length - 1 : activeMonth;
+  document.getElementById('cashMonthLabel').textContent = DATA.labels[i];
+  const cf = DATA.cashFlats[i];
+  document.getElementById('cashNote').textContent = `${cf.flats.length} flat${cf.flats.length!==1?'s':''} × ₹3,000 = ${INR(cf.flats.length*3000)} (${cf.note})`;
+  const chips = document.getElementById('cashChips');
+  chips.innerHTML = '';
+  cf.flats.forEach(flat => {
+    const c = document.createElement('div');
+    c.className = 'chip cash';
+    c.innerHTML = `Flat ${flat}<span class="pop">Paid: ₹3,000</span>`;
+    c.onclick = () => toggleChip(c);
+    chips.appendChild(c);
+  });
+}
+
+function buildSubtile(pillsId, tableId, log, monthState, setter, cols){
+  const pillsWrap = document.getElementById(pillsId);
+  pillsWrap.innerHTML = '';
+  const allB = document.createElement('button');
+  allB.className = 'pill2' + (monthState===null?' active':'');
+  allB.textContent = 'All'; allB.onclick = () => { setter(null); render(); };
+  pillsWrap.appendChild(allB);
+  DATA.labels.forEach(lab => {
+    const b = document.createElement('button');
+    b.className = 'pill2' + (monthState===lab?' active':'');
+    b.textContent = lab.replace(' 26','');
+    b.onclick = () => { setter(lab); render(); };
+    pillsWrap.appendChild(b);
+  });
+  const tbody = document.querySelector('#'+tableId+' tbody');
+  tbody.innerHTML = '';
+  const filtered = monthState===null ? log : log.filter(e => e.month === monthState);
+  if(filtered.length === 0){
+    tbody.innerHTML = `<tr><td colspan="${cols}" class="empty-note">No entries${monthState?` for ${monthState}`:''}.</td></tr>`;
     return;
   }
-  const total = items.reduce((s,d)=>s+d.amount, 0);
-  let html = '<div class="chip-group">';
-  items.forEach(d => {
-    html += makeChip(chipCls, d.flat, fmtK(d.amount), fmt(d.amount) + ' \u2014 ' + d.note);
-  });
-  html += `</div><div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;">
-    <span style="font-size:0.75rem;color:var(--muted);">${items.length} flat${items.length>1?'s':''} · ${totalLabel}</span>
-    <span style="font-size:0.9rem;font-weight:800;">${fmt(total)}</span>
-  </div>`;
-  el.innerHTML = html;
-}// ═══════════════ TREND CHART ═══════════════
-function buildTrendChart() {
-  const ctx = document.getElementById('trendChart').getContext('2d');
-  const totIncome   = DATA.labels.map((_,i)=>DATA.income.online[i]+DATA.income.dues[i]+DATA.income.corpus[i]+DATA.income.ads[i]+DATA.income.party[i]);
-  const totExpenses = DATA.labels.map((_,i)=>DATA.expenses.online[i]+DATA.expenses.cash[i]);
-  trendInst = new Chart(ctx, {
-    type:'bar',
-    data:{
-      labels:DATA.labels,
-      datasets:[
-        {label:'Income',   data:totIncome,   backgroundColor:'rgba(37,99,168,0.7)', borderRadius:4},
-        {label:'Expenses', data:totExpenses, backgroundColor:'rgba(220,38,38,0.7)', borderRadius:4},
-        {label:'Closing Balance', data:DATA.balance.closing, type:'line', borderColor:'#16a34a', backgroundColor:'rgba(22,163,74,0.07)', tension:0.3, yAxisID:'y2', pointRadius:5, fill:true},
-      ]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{legend:{position:'top',labels:{font:{size:11}}}, tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ₹${Math.round(ctx.parsed.y).toLocaleString('en-IN')}`}}},
-      scales:{
-        x:{grid:{display:false}},
-        y:{position:'left', ticks:{callback:v=>'₹'+(v/1000)+'K'}},
-        y2:{position:'right', grid:{drawOnChartArea:false}, ticks:{callback:v=>'₹'+(v/100000).toFixed(1)+'L'}}
-      }
-    }
+  filtered.forEach(e => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = cols===3
+      ? `<td>${e.flat || e.flats}</td><td class="amt">${INR(e.amount)}</td><td style="font-size:12.5px;color:var(--ink-soft);">${(monthState===null?e.month+' — ':'')}${e.note||''}</td>`
+      : `<td>${e.flat}</td><td class="amt">${INR(e.amount)}</td>`;
+    tbody.appendChild(tr);
   });
 }
 
-// ═══════════════ PROJECTION ═══════════════
-function buildProjection() {
-  const n=6;
-  const avgOnline = DATA.income.online.reduce((a,b)=>a+b,0)/n;
-  const avgStaff  = [64500,59000,59000,59000,57000,64000].reduce((a,b)=>a+b,0)/n;
-  const avgDiesel = [8000,11600,9000,12100,12000,15000].reduce((a,b)=>a+b,0)/n;
-  const avgTankers= [0,3200,26100,27300,20200,15800].reduce((a,b)=>a+b,0)/n;
-  const avgMisc   = [8659,3270,7025,2960,3015,3060].reduce((a,b)=>a+b,0)/n;
+function average(arr){ return arr.reduce((a,b)=>a+b,0) / arr.length; }
 
-  const projIncome=[['Maintenance (avg)',Math.round(avgOnline)],['Solar Savings ☀',18500],['Adonmo Ads',1100]];
-  const projExp   =[['Staff & Security',Math.round(avgStaff)],['Generator / Diesel',Math.round(avgDiesel)],['Water Tankers',Math.round(avgTankers)],['Internet / Fiber',348],['Misc & Cleaning',Math.round(avgMisc)]];
+function buildProjections(){
+  const n = DATA.months.length;
+  const staffAvg = average(DATA.breakdown.map(m => m.find(x=>x.cat==='Staff & Security').amt));
+  const dieselAvg = average(DATA.breakdown.map(m => m.find(x=>x.cat==='Generator / Diesel').amt));
+  const tankerAvg = average(DATA.breakdown.map(m => m.find(x=>x.cat==='Water Tankers').amt));
+  const miscAvg = average(DATA.breakdown.map(m => m.find(x=>x.cat==='Misc & Cleaning').amt));
+  const fiberLatest = DATA.breakdown[n-1].find(x=>x.cat==='Internet / Fiber').amt;
+  const maintAvg = average(DATA.income.online);
 
-  const maxInc = Math.max(...projIncome.map(d=>d[1]));
-  let ih='';
-  projIncome.forEach(([l,v])=>{
-    ih+=`<div class="bl-item"><div class="bl-dot" style="background:#2563a8;"></div><div class="bl-label">${l}</div><div class="bl-bar-wrap"><div class="bl-bar-track"><div class="bl-bar-fill" style="width:${Math.round((v/maxInc)*100)}%;background:#2563a8;"></div></div></div><div class="bl-val">${fmt(v)}</div></div>`;
-  });
-  ih+=`<div style="margin-top:10px;font-weight:700;font-size:0.85rem;text-align:right;border-top:1px solid var(--border);padding-top:8px;">Total: ${fmt(projIncome.reduce((a,b)=>a+b[1],0))}</div>`;
-  document.getElementById('projIncomeContent').innerHTML=ih;
+  const expenseList = [
+    ['Staff & Security (avg)', staffAvg],
+    ['Generator / Diesel (avg)', dieselAvg],
+    ['Water Tankers (avg, seasonal — higher Mar–May)', tankerAvg],
+    ['Internet / Fiber (latest bill)', fiberLatest],
+    ['Misc & Cleaning (avg)', miscAvg],
+  ];
+  const totalExpense = expenseList.reduce((a,[,v])=>a+v, 0);
+  document.getElementById('projExpenseList').innerHTML = expenseList.map(([k,v]) =>
+    `<div class="stat-line"><span class="k">${k}</span><span class="v">${INR(v)}</span></div>`).join('');
+  document.getElementById('projExpenseTotal').textContent = INR(totalExpense);
 
-  const maxExp=Math.max(...projExp.map(d=>d[1]));
-  let eh='';
-  projExp.forEach(([l,v])=>{
-    eh+=`<div class="bl-item"><div class="bl-dot" style="background:#dc2626;"></div><div class="bl-label">${l}</div><div class="bl-bar-wrap"><div class="bl-bar-track"><div class="bl-bar-fill" style="width:${Math.round((v/maxExp)*100)}%;background:#dc2626;"></div></div></div><div class="bl-val">${fmt(v)}</div></div>`;
-  });
-  eh+=`<div style="margin-top:10px;font-weight:700;font-size:0.85rem;text-align:right;border-top:1px solid var(--border);padding-top:8px;">Total: ${fmt(projExp.reduce((a,b)=>a+b[1],0))}</div>`;
-  document.getElementById('projExpContent').innerHTML=eh;
+  const incomeList = [
+    ['Maintenance (avg)', maintAvg],
+    ['Solar Savings ☀ (fixed)', DATA.SOLAR_MONTHLY],
+    ['Adonmo Ads (fixed)', DATA.ADONMO_MONTHLY],
+  ];
+  const totalIncome = incomeList.reduce((a,[,v])=>a+v, 0);
+  document.getElementById('projIncomeList').innerHTML = incomeList.map(([k,v]) =>
+    `<div class="stat-line"><span class="k">${k}</span><span class="v">${INR(v)}</span></div>`).join('');
+  document.getElementById('projIncomeTotal').textContent = INR(totalIncome);
 }
 
-window.addEventListener('DOMContentLoaded', init);
+function buildFlatNotes(){
+  const notes = [
+    {flat:'104', text:'Arrears since Oct 2025 including vacating charges — <b>cleared in full in July 2026</b> (₹10,000 paid).'},
+    {flat:'407', text:'Corpus fund due. Started at ₹45,000; reduces by ₹5,000 when paid. No payment in July 2026 — <b>₹30,000 still outstanding</b> (unchanged since June).'},
+    {flat:'507', text:'Has been paying significant advances; settled through Apr 2027 as of May 2026.'},
+    {flat:'403', text:'New arrear this month — missed July 2026 maintenance (₹3,000), first time this flat has appeared in outstanding dues.'},
+  ];
+  document.getElementById('flatNotes').innerHTML = notes.map(n =>
+    `<div class="note-card"><b>Flat ${n.flat}</b> — ${n.text}</div>`).join('');
+}
+
+function render(){
+  buildMonthPills();
+  buildSummaryBar();
+  buildKPIs();
+  buildOverdueBanner();
+  buildSolarBanner();
+  buildSolarChart();
+  buildTrendChart();
+  buildBreakdownChart();
+  buildBalanceCard();
+  buildCashCard();
+  buildSubtile('advPills','advTable', DATA.advancePayments, advMonth, m=>advMonth=m, 3);
+  buildSubtile('duesPills','duesTable', DATA.duesClearedLog, duesMonth, m=>duesMonth=m, 3);
+  buildSubtile('partyPills','partyTable', DATA.partyHallLog, partyMonth, m=>partyMonth=m, 2);
+  buildProjections();
+  buildFlatNotes();
+}
+
+render();
 </script>
 </body>
 </html>
